@@ -40,14 +40,14 @@ const Doctors = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="max-w-6xl w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 py-10">
+    <div className="max-w-6xl w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 py-6 sm:py-8 md:py-10 px-4 sm:px-6">
       {doctors.map((doctor) => (
         <div
           key={doctor._id}
-          className="bg-[#23282f] rounded-2xl shadow-lg flex flex-col items-center p-4 pt-6 min-w-[220px] max-w-[270px] mx-auto"
+          className="bg-[#23282f] rounded-2xl shadow-lg flex flex-col items-center p-3 sm:p-4 pt-4 sm:pt-6 min-w-[200px] sm:min-w-[220px] max-w-[250px] sm:max-w-[270px] mx-auto"
         >
           {/* Image */}
-          <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-[#181d23] mb-3 flex items-center justify-center bg-gray-700">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 sm:border-4 border-[#181d23] mb-2 sm:mb-3 flex items-center justify-center bg-gray-700">
             {doctor.photo ? (
               <img
                 src={`http://localhost:5000${doctor.photo}`}
@@ -55,20 +55,20 @@ const Doctors = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
               </svg>
             )}
           </div>
           {/* Name */}
-          <h3 className="text-white font-bold text-base mb-1 text-center">{doctor.name}</h3>
+          <h3 className="text-white font-bold text-sm sm:text-base mb-1 text-center">{doctor.name}</h3>
           {/* Specialization */}
           <span className="text-teal-400 font-semibold mb-2 text-xs text-center block">{doctor.specialization || "General Practitioner"}</span>
           {/* Bio */}
-          <p className="text-gray-300 text-xs mb-4 text-center min-h-[40px]">{doctor.bio || "Experienced medical professional dedicated to providing quality healthcare services to patients."}</p>
+          <p className="text-gray-300 text-xs mb-3 sm:mb-4 text-center min-h-[32px] sm:min-h-[40px]">{doctor.bio || "Experienced medical professional dedicated to providing quality healthcare services to patients."}</p>
           {/* View More Button */}
           <button
-            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 rounded-lg transition-colors duration-300 text-sm tracking-wide mt-auto"
+            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-1.5 sm:py-2 rounded-lg transition-colors duration-300 text-xs sm:text-sm tracking-wide mt-auto"
             onClick={() => navigate(`/doctors/${doctor._id}`)}
           >
             View More
