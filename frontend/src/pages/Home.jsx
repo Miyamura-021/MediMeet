@@ -10,6 +10,10 @@ import doc2 from '../assets/images/doc2.jpg';
 import doc3 from '../assets/images/doc3.jpg';
 import doc4 from '../assets/images/doc4.jpg';
 import contactImg from "../assets/images/contact.jpg";
+// Service images
+import psychiatristImg from "../assets/images/psychiatrist.jpeg";
+import cardiologyImg from "../assets/images/cardiology.jpg";
+import immunologyImg from "../assets/images/immunology.jpg";
 
 const heroSlides = [
   {
@@ -17,15 +21,25 @@ const heroSlides = [
     image: home1,
     align: "left",
     headline: (
-      <span className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tight">We Make <FaHospitalAlt className="inline-block text-4xl sm:text-5xl md:text-6xl text-white ml-2 align-middle" /></span>
+      <span className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tight">
+        Your Health, Our Priority
+      </span>
     ),
-    subheadline: <span className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-teal-400 leading-tight block mb-4 tracking-tight">Quality Healthcare</span>,
-    description: <span className="text-gray-300 text-base sm:text-lg md:text-2xl mb-10">Same-Day Emergency Appointments!</span>,
+    subheadline: (
+      <span className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-teal-400 leading-tight block mb-4 tracking-tight">
+        Expert Care, Just a Click Away
+      </span>
+    ),
+    description: (
+      <span className="text-gray-300 text-base sm:text-lg md:text-2xl mb-10">
+        Access expert medical care from the comfort of your home. Fast, easy, and secure appointment booking for you and your family.
+      </span>
+    ),
     anim: [
-      'translate-x-16', // headline from right
-      'translate-x-16', // subheadline from right
-      'translate-x-16', // description from right
-      'translate-x-16', // button from right
+      'translate-x-16',
+      'translate-x-16',
+      'translate-x-16',
+      'translate-x-16',
     ]
   },
   {
@@ -65,6 +79,10 @@ const Home = () => {
   const location = useLocation();
   const contactRef = useRef(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [animHeadline, setAnimHeadline] = useState(false);
+  const [animSub, setAnimSub] = useState(false);
+  const [animDesc, setAnimDesc] = useState(false);
+  const [animButton, setAnimButton] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setShowHeadline(true), 800); // was 400
@@ -83,6 +101,21 @@ const Home = () => {
     }
   }, [location.pathname]);
 
+  // Animation trigger on slide/content change
+  useEffect(() => {
+    setAnimHeadline(false);
+    setAnimSub(false);
+    setAnimDesc(false);
+    setAnimButton(false);
+    const t1 = setTimeout(() => setAnimHeadline(true), 800); // 0.8s
+    const t2 = setTimeout(() => setAnimSub(true), 1200);    // 1.2s
+    const t3 = setTimeout(() => setAnimDesc(true), 2000);   // 2s
+    const t4 = setTimeout(() => setAnimButton(true), 2800); // 2.8s
+    return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+    };
+  }, [currentSlide, contentVisible]);
+
   // Carousel autoplay (with content transition)
   useEffect(() => {
     const timer = setInterval(() => {
@@ -91,7 +124,7 @@ const Home = () => {
         setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
         setContentVisible(true);
       }, 400); // 400ms fade out before slide change
-    }, 12000);
+    }, 12000); // 12s per slide
     return () => clearInterval(timer);
   }, []);
 
@@ -118,13 +151,13 @@ const Home = () => {
       id: 2,
       name: "Dr. Andrew Bert",
       specialization: "Neurology Specialist",
-      image: doc2,
+      image: doc3, // swapped
     },
     {
       id: 3,
       name: "Dr. Teresa Mayer",
       specialization: "Senior Pathologist",
-      image: doc3,
+      image: doc2, // swapped
     },
     {
       id: 4,
@@ -185,40 +218,54 @@ const Home = () => {
           {slide.align === "right" && (
             <div className="absolute inset-0 bg-black bg-opacity-40 rounded-2xl shadow-2xl -z-10" />
           )}
-          {/* Staggered content transitions with direction */}
-          <div
-            className={`transition-all duration-700 delay-200 ${contentVisible ? 'opacity-100' : 'opacity-0'}
-              ${currentSlide === 0 ? (contentVisible ? 'translate-x-0' : '-translate-x-10') : (contentVisible ? 'translate-x-0' : 'translate-x-10')}`}
-          >
-            {currentSlide === 0 ? (
-              <>
-                <div>{typeof slide.headline === 'function' ? slide.headline(false) : slide.headline}</div>
-                {slide.subheadline && <div>{slide.subheadline}</div>}
-                <div>{slide.description}</div>
-                <div>
-                  <button
-                    className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-5 py-2 rounded-lg shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
-                    onClick={scrollToContact}
-                  >
-                    MAKE AN APPOINTMENT!
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
+          {/* Animated content rows */}
+          {currentSlide === 0 ? (
+            <>
+              {/* Headline */}
+              <div className={`transition-all duration-700 ${animHeadline ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
                 {typeof slide.headline === 'function' ? slide.headline(false) : slide.headline}
-                <div>{slide.description}</div>
-                <div>
-                  <button
-                    className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-5 py-2 rounded-lg shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
-                    onClick={scrollToContact}
-                  >
-                    MAKE AN APPOINTMENT!
-                  </button>
+              </div>
+              {/* Subheadline */}
+              {slide.subheadline && (
+                <div className={`transition-all duration-700 ${animSub ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-16'}`}>
+                  {slide.subheadline}
                 </div>
-              </>
-            )}
-          </div>
+              )}
+              {/* Description */}
+              <div className={`transition-all duration-700 ${animDesc ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+                {slide.description}
+              </div>
+              {/* Button */}
+              <div className={`transition-all duration-700 ${animButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <button
+                  className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-5 py-2 rounded-lg shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  onClick={scrollToContact}
+                >
+                  Book Your Appointment
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Headline (words animate in) */}
+              <div className={`transition-all duration-700 ${animHeadline ? 'opacity-100 -translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+                {typeof slide.headline === 'function' ? slide.headline(!animHeadline) : slide.headline}
+              </div>
+              {/* Description */}
+              <div className={`transition-all duration-700 ${animDesc ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+                {slide.description}
+              </div>
+              {/* Button */}
+              <div className={`transition-all duration-700 ${animButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <button
+                  className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-5 py-2 rounded-lg shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  onClick={scrollToContact}
+                >
+                  MAKE AN APPOINTMENT!
+                </button>
+              </div>
+            </>
+          )}
         </div>
         {/* Carousel Arrows */}
         <button
@@ -282,28 +329,28 @@ const Home = () => {
         <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Card 1 */}
           <div className="bg-[#181d23] rounded shadow-lg overflow-hidden flex flex-col">
-            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Psychiatry" className="w-full h-56 object-cover" />
+            <img src={psychiatristImg} alt="Psychiatry" className="w-full h-56 object-cover" />
             <div className="p-6 flex-1 flex flex-col">
               <h3 className="text-xl font-bold text-white mb-2">Psychiatry</h3>
-              <p className="text-gray-300 mb-4 flex-1">Our Cardiology hospital utilizes state-of-the-art technology and employs a team of true experts.</p>
+              <p className="text-gray-300 mb-4 flex-1">Our Psychiatry department utilizes state-of-the-art technology and employs a team of true experts in mental health care.</p>
               <a href="#" className="text-teal-400 font-bold uppercase text-sm tracking-wide hover:underline">Read More</a>
             </div>
           </div>
           {/* Card 2 */}
           <div className="bg-[#181d23] rounded shadow-lg overflow-hidden flex flex-col">
-            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd07?auto=format&fit=crop&w=600&q=80" alt="Cardiology" className="w-full h-56 object-cover" />
+            <img src={cardiologyImg} alt="Cardiology" className="w-full h-56 object-cover" />
             <div className="p-6 flex-1 flex flex-col">
               <h3 className="text-xl font-bold text-white mb-2">Cardiology</h3>
-              <p className="text-gray-300 mb-4 flex-1">Our Cardiology hospital utilizes state-of-the-art technology and employs a team of true experts.</p>
+              <p className="text-gray-300 mb-4 flex-1">Our Cardiology hospital utilizes state-of-the-art technology and employs a team of true experts in heart care.</p>
               <a href="#" className="text-teal-400 font-bold uppercase text-sm tracking-wide hover:underline">Read More</a>
             </div>
           </div>
           {/* Card 3 */}
           <div className="bg-[#181d23] rounded shadow-lg overflow-hidden flex flex-col">
-            <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80" alt="Immunology" className="w-full h-56 object-cover" />
+            <img src={immunologyImg} alt="Immunology" className="w-full h-56 object-cover" />
             <div className="p-6 flex-1 flex flex-col">
               <h3 className="text-xl font-bold text-white mb-2">Immunology</h3>
-              <p className="text-gray-300 mb-4 flex-1">Our neurology hospital utilizes state-of-the-art technology and employs a team of true experts.</p>
+              <p className="text-gray-300 mb-4 flex-1">Our Immunology department utilizes state-of-the-art technology and employs a team of true experts in immune system care.</p>
               <a href="#" className="text-teal-400 font-bold uppercase text-sm tracking-wide hover:underline">Read More</a>
             </div>
           </div>
