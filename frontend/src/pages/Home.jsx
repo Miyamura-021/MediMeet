@@ -290,17 +290,14 @@ const Home = () => {
       {/* About Section */}
       <section id="about" className="relative w-full bg-[#181d23] py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-0 flex justify-center items-center">
         <div className="max-w-6xl w-full flex flex-col lg:flex-row items-center gap-8 sm:gap-12 md:gap-20">
-          {/* Images - larger, 1cm gap */}
-          <div className="flex-1 flex flex-col gap-4 sm:gap-6 items-center lg:items-start relative min-w-[280px] sm:min-w-[350px] h-[320px] sm:h-[420px] md:h-[500px]">
-            {/* Back image with grid overlay and button */}
-            <div className="absolute left-0 top-0 w-64 h-64 sm:w-80 sm:h-80 md:w-[22rem] md:h-[22rem] rounded overflow-hidden z-0" style={{background: 'repeating-linear-gradient(0deg, #23282f 0px, #23282f 2px, transparent 2px, transparent 20px), repeating-linear-gradient(90deg, #23282f 0px, #23282f 2px, transparent 2px, transparent 20px)'}}>
-              <img src={about1} alt="About 1" className="w-full h-full object-cover rounded" />
-              <button className="absolute left-0 bottom-0 m-2 sm:m-4 px-4 sm:px-6 py-1.5 sm:py-2 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded shadow font-sans text-xs sm:text-sm tracking-wide">GET IT KNOW <span className="ml-1">&gt;</span></button>
-            </div>
-            {/* Front image, overlapping with 1cm gap */}
-            <div className="absolute left-20 sm:left-32 md:left-40 top-12 sm:top-20 md:top-24 w-64 h-64 sm:w-80 sm:h-80 md:w-[22rem] md:h-[22rem] rounded overflow-hidden border-2 sm:border-4 border-white shadow-2xl z-10">
-              <img src={about2} alt="About 2" className="w-full h-full object-cover rounded" />
-            </div>
+          {/* Image (responsive, no overlap on mobile) */}
+          <div className="flex-1 flex justify-center items-center w-full lg:w-auto mb-6 lg:mb-0">
+            {/* Show only about2 on mobile, both on desktop if desired */}
+            <img
+              src={about2}
+              alt="About"
+              className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xs xl:max-w-sm rounded shadow-2xl object-cover"
+            />
           </div>
           {/* Text Content */}
           <div className="flex-1 flex flex-col items-start">
@@ -319,7 +316,7 @@ const Home = () => {
               </ul>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
-              <button className="bg-[#23282f] hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded shadow transition text-sm sm:text-base tracking-wide border border-[#23282f]">View More</button>
+              <button className="bg-[#23282f] hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded shadow transition text-sm sm:text-base tracking-wide border border-[#23282f]">GET IT KNOW <span className="ml-1">&gt;</span></button>
               <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded shadow transition text-sm sm:text-base tracking-wide" onClick={scrollToContact}>Contact Us!</button>
             </div>
           </div>
