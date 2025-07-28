@@ -21,19 +21,35 @@ const heroSlides = [
     image: home1,
     align: "left",
     headline: (
-      <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-extrabold text-white leading-tight tracking-tight">
-        Your Health, Our Priority
-      </span>
+      <>
+        {/* Subtle icon and brand above headline, left-aligned */}
+        <div className="mb-3 flex items-center gap-2">
+          <svg width="40" height="40" className="text-[#2de1c2]" fill="none" viewBox="0 0 48 48">
+            <path d="M24 4v40M4 24h40" stroke="#2de1c2" strokeWidth="3" strokeLinecap="round"/>
+          </svg>
+          <span className="uppercase text-[#2de1c2] text-lg font-semibold tracking-widest">MEDIMEET</span>
+        </div>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight mb-4 text-left">
+          Your Health,<br />
+          Our Priority<br />
+          <span className="text-[#2de1c2]">Expert Care</span>,<br />
+          <span className="text-[#2de1c2]">Just a Click Away</span>
+        </h1>
+      </>
     ),
-    subheadline: (
-      <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl font-extrabold text-teal-400 leading-tight block mb-2 sm:mb-4 tracking-tight">
-        Expert Care, Just a Click Away
-      </span>
-    ),
+    subheadline: null,
     description: (
-      <span className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-6 sm:mb-8 lg:mb-10">
-        Access expert medical care from the comfort of your home. Fast, easy, and secure appointment booking for you and your family.
-      </span>
+      <p className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-8 lg:mb-12 max-w-2xl text-left">
+        Access expert medical care from the comfort of your home.<br />
+        Fast, easy, and secure appointment booking for you and your family.
+      </p>
+    ),
+    button: (
+      <button
+        className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-10 py-4 rounded-xl shadow-lg transition text-lg tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400 text-left"
+      >
+        Book Your Appointment
+      </button>
     ),
     anim: [
       'translate-x-16',
@@ -46,27 +62,37 @@ const heroSlides = [
     id: 2,
     image: home2,
     align: "right",
-    headline: (animating) => (
-      <div className="flex flex-col gap-1 sm:gap-2">
-        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-          <svg width="32" height="32" className="sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-12 xl:h-12 text-teal-400" fill="none" viewBox="0 0 48 48">
+    headline: (
+      <>
+        <div className="flex items-center gap-3 mb-2 justify-end">
+          <svg width="32" height="32" className="text-[#2de1c2]" fill="none" viewBox="0 0 48 48">
             <path d="M24 4v40M4 24h40" stroke="#2de1c2" strokeWidth="3" strokeLinecap="round"/>
           </svg>
-          <span className="uppercase text-white text-xs sm:text-sm md:text-base lg:text-lg font-semibold tracking-widest">We Give You The Best!</span>
+          <span className="uppercase text-white text-lg font-semibold tracking-widest">We Give You The Best!</span>
         </div>
-        {/* Animate each word of the headline */}
-        <div className="flex flex-wrap gap-x-1 sm:gap-x-2 gap-y-1">
-          {"Medical Services That You Can Trust".split(" ").map((word, i) => (
-            <span key={i} className={`inline-block transition-all duration-1000 ${animating ? 'opacity-0 -translate-x-16' : 'opacity-100 translate-x-0'} delay-${200 + i * 120} text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-extrabold text-[#2de1c2] leading-tight tracking-tight`}>{word}</span>
-          ))}
-        </div>
-      </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white leading-tight tracking-tight text-right mb-2">
+          Medical Services<br />
+          <span className="text-[#2de1c2]">That You Can Trust</span>
+        </h1>
+      </>
     ),
     subheadline: null,
-    description: <span className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 lg:mb-8 block">Need professional help? Our support staff will answer your questions.<br/>Visit us Now or Make an Appointment!</span>,
+    description: (
+      <p className="text-gray-300 text-base md:text-lg lg:text-xl xl:text-2xl mb-6 lg:mb-10 text-right max-w-2xl ml-auto">
+        Need professional help? Our support staff<br /> will answer your questions.<br />
+        Visit us Now or Make an Appointment!
+      </p>
+    ),
+    button: (
+      <button
+        className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-6 py-3 rounded-lg shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+      >
+        Make an Appointment!
+      </button>
+    ),
     anim: [
-      '-translate-x-16', // description from left
-      '-translate-x-16', // button from left
+      '-translate-x-16',
+      '-translate-x-16',
     ]
   },
 ];
@@ -110,9 +136,9 @@ const Home = () => {
     setAnimDesc(false);
     setAnimButton(false);
     const t1 = setTimeout(() => setAnimHeadline(true), 800); // 0.8s
-    const t2 = setTimeout(() => setAnimSub(true), 1200);    // 1.2s
+    const t2 = setTimeout(() => setAnimSub(true), 1300);    // 1.3s
     const t3 = setTimeout(() => setAnimDesc(true), 2000);   // 2s
-    const t4 = setTimeout(() => setAnimButton(true), 2800); // 2.8s
+    const t4 = setTimeout(() => setAnimButton(true), 2900); // 2.9s
     return () => {
       clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
     };
@@ -211,64 +237,43 @@ const Home = () => {
                 : "linear-gradient(90deg, rgba(16,39,51,0.92) 55%, rgba(16,39,51,0.7) 70%, rgba(44,255,224,0.10) 100%)",
           }}
         />
-        {/* Content */}
-        <div
-          className={`relative z-10 flex flex-col justify-center ${slide.align === 'right' ? 'items-end text-right' : 'items-start text-left'} w-full px-4 sm:px-6 md:px-8 lg:px-16 py-6 md:py-10`}
-          style={slide.align === "right" ? { marginLeft: "auto" } : { }}
-        >
-          {/* Shadowed content background for right-aligned slide */}
-          {slide.align === "right" && (
-            <div className="absolute inset-0 bg-black bg-opacity-40 rounded-2xl shadow-2xl -z-10" />
-          )}
-          {/* Animated content rows */}
-          {currentSlide === 0 ? (
-            <>
-              {/* Headline */}
-              <div className={`transition-all duration-700 ${animHeadline ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`}>
-                {typeof slide.headline === 'function' ? slide.headline(false) : slide.headline}
+        {/* Content block, left or right half depending on slide */}
+        {contentVisible && (
+          <div className={`relative z-20 flex flex-col justify-center w-full h-full px-4 sm:px-6 md:px-8 lg:px-24 xl:px-32 py-6 md:py-10 lg:py-0 ${currentSlide === 0 ? 'items-start' : 'items-end'}`}>
+            <div className={`w-full lg:w-1/2 flex flex-col justify-center h-full ${currentSlide === 0 ? 'items-start text-left' : 'items-end text-right'}`}>
+              {/* Animated Headline */}
+              <div
+                className={`transition-all duration-700 ${animHeadline ? 'opacity-100 translate-x-0' : `${currentSlide === 0 ? 'opacity-0 -translate-x-16' : 'opacity-0 translate-x-16'}`}`}
+                style={{ transitionDelay: '0.8s' }}
+              >
+                {slide.headline}
               </div>
-              {/* Subheadline */}
+              {/* Animated Subheadline (if present) */}
               {slide.subheadline && (
-                <div className={`transition-all duration-700 ${animSub ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-16'}`}>
+                <div
+                  className={`transition-all duration-700 ${animSub ? 'opacity-100 translate-x-0' : `${currentSlide === 0 ? 'opacity-0 -translate-x-16' : 'opacity-0 translate-x-16'}`}`}
+                  style={{ transitionDelay: '1.3s' }}
+                >
                   {slide.subheadline}
                 </div>
               )}
-              {/* Description */}
-              <div className={`transition-all duration-700 ${animDesc ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+              {/* Animated Description */}
+              <div
+                className={`transition-all duration-700 ${animDesc ? 'opacity-100 translate-x-0' : `${currentSlide === 0 ? 'opacity-0 -translate-x-16' : 'opacity-0 translate-x-16'}`}`}
+                style={{ transitionDelay: '2s' }}
+              >
                 {slide.description}
               </div>
-              {/* Button */}
-              <div className={`transition-all duration-700 ${animButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <button
-                  className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-4 sm:px-5 py-2 rounded-lg shadow transition text-sm sm:text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  onClick={scrollToContact}
-                >
-                  Book Your Appointment
-                </button>
+              {/* Animated Button */}
+              <div
+                className={`mt-2 lg:mt-4 w-full flex flex-col sm:flex-row gap-4 ${currentSlide === 0 ? 'justify-start items-start' : 'justify-end items-end'} transition-all duration-700 ${animButton ? 'opacity-100 translate-x-0' : `${currentSlide === 0 ? 'opacity-0 -translate-x-16' : 'opacity-0 translate-x-16'}`}`}
+                style={{ transitionDelay: '2.9s' }}
+              >
+                {slide.button}
               </div>
-            </>
-          ) : (
-            <>
-              {/* Headline (words animate in) */}
-              <div className={`transition-all duration-700 ${animHeadline ? 'opacity-100 -translate-y-0' : 'opacity-0 -translate-y-10'}`}>
-                {typeof slide.headline === 'function' ? slide.headline(!animHeadline) : slide.headline}
-              </div>
-              {/* Description */}
-              <div className={`transition-all duration-700 ${animDesc ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-                {slide.description}
-              </div>
-              {/* Button */}
-              <div className={`transition-all duration-700 ${animButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <button
-                  className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-4 sm:px-5 py-2 rounded-lg shadow transition text-sm sm:text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  onClick={scrollToContact}
-                >
-                  MAKE AN APPOINTMENT!
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
         {/* Carousel Arrows */}
         <button
           className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-40 hover:bg-opacity-70 text-white rounded-full w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center z-20"
