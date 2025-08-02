@@ -7,6 +7,7 @@ import Doctor from './models/DoctorSchema.js';
 import User from './models/UserSchema.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Booking from './models/BookingSchema.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +34,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// Predefined time slots
+const TIME_SLOTS = ['9-10am', '10-11am', '11-12am', '12-1pm', '1-2pm', '2-3pm', '3-4pm', '4-5pm'];
+
 // Routes
 // Get all doctors (with pagination)
 app.get('/api/doctors', async (req, res) => {
@@ -40,8 +44,15 @@ app.get('/api/doctors', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 4;
     const skip = (page - 1) * limit;
-    const total = await Doctor.countDocuments();
-    const doctors = await Doctor.find().skip(skip).limit(limit);
+    const featured = req.query.featured === 'true';
+    
+    let filter = {};
+    if (featured) {
+      filter.featured = true;
+    }
+    
+    const total = await Doctor.countDocuments(filter);
+    const doctors = await Doctor.find(filter).skip(skip).limit(limit);
     res.json({
       doctors,
       total,
@@ -95,6 +106,7 @@ app.get('/api/doctors/:id', async (req, res) => {
 // Update a doctor
 app.put('/api/doctors/:id', upload.single('photo'), async (req, res) => {
   try {
+    console.log('PUT /api/doctors/:id - Body:', req.body);
     const updateData = { ...req.body };
     if (req.file) {
       updateData.photo = `/uploads/${req.file.filename}`;
@@ -102,9 +114,17 @@ app.put('/api/doctors/:id', upload.single('photo'), async (req, res) => {
     if (updateData.qualifications) updateData.qualifications = JSON.parse(updateData.qualifications);
     if (updateData.experiences) updateData.experiences = JSON.parse(updateData.experiences);
     if (updateData.timeSlots) updateData.timeSlots = JSON.parse(updateData.timeSlots);
+    if (updateData.featured !== undefined) {
+      console.log('Featured field received:', updateData.featured, 'Type:', typeof updateData.featured);
+      updateData.featured = updateData.featured === 'true' || updateData.featured === true;
+      console.log('Featured field processed:', updateData.featured);
+    }
+    console.log('Final update data:', updateData);
     const doctor = await Doctor.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    console.log('Updated doctor featured status:', doctor.featured);
     res.json(doctor);
   } catch (err) {
+    console.error('Error in PUT /api/doctors/:id:', err);
     res.status(400).json({ error: err.message });
   }
 });
@@ -121,7 +141,7 @@ app.delete('/api/doctors/:id', async (req, res) => {
 
 app.post('/api/auth/signup', async (req, res) => {
   try {
-    const { name, email, password, phone, gender, role } = req.body;
+    const { name, email, password, phone, gender } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
@@ -134,7 +154,7 @@ app.post('/api/auth/signup', async (req, res) => {
       password: hashedPassword,
       phone,
       gender,
-      role: role || 'patient',
+      role: 'patient',
     });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
@@ -167,6 +187,109 @@ app.post('/api/auth/login', async (req, res) => {
     res.json({ token, user: userData });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Create a booking (with or without doctor)
+app.post('/api/bookings', async (req, res) => {
+  try {
+    const { user, doctor, specialty, appointmentDate, timeSlot } = req.body;
+    let assignedDoctor = doctor;
+    // If no doctor, auto-assign by specialty and slot
+    if (!assignedDoctor && specialty) {
+      // Find all doctors in the specialty
+      const doctors = await Doctor.find({ specialization: specialty });
+      // Find a doctor with the slot available
+      for (const doc of doctors) {
+        const exists = await Booking.findOne({ doctor: doc._id, appointmentDate, timeSlot });
+        if (!exists) {
+          assignedDoctor = doc._id;
+          break;
+        }
+      }
+      if (!assignedDoctor) {
+        return res.status(400).json({ error: 'No available doctor for this slot' });
+      }
+    }
+    // Check if slot is already booked for this doctor
+    const alreadyBooked = await Booking.findOne({ doctor: assignedDoctor, appointmentDate, timeSlot });
+    if (alreadyBooked) {
+      return res.status(400).json({ error: 'Slot already booked' });
+    }
+    // Get ticket price from doctor
+    const docObj = await Doctor.findById(assignedDoctor);
+    const ticketPrice = docObj ? docObj.ticketPrice : '0';
+    const booking = new Booking({
+      user,
+      doctor: assignedDoctor,
+      specialty,
+      appointmentDate,
+      timeSlot,
+      ticketPrice,
+      status: 'pending',
+      isPaid: false,
+    });
+    await booking.save();
+    res.status(201).json(booking);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Get available slots for a doctor or specialty on a date
+app.get('/api/bookings/slots', async (req, res) => {
+  try {
+    const { doctor, specialty, appointmentDate } = req.query;
+    let doctors = [];
+    if (doctor) {
+      doctors = [await Doctor.findById(doctor)];
+    } else if (specialty) {
+      doctors = await Doctor.find({ specialization: specialty });
+    }
+    if (!doctors.length) return res.json({ slots: [] });
+    // Find all bookings for these doctors on the date
+    const bookings = await Booking.find({
+      doctor: { $in: doctors.map(d => d._id) },
+      appointmentDate: new Date(appointmentDate),
+    });
+    // For each slot, check if at least one doctor is available
+    const slots = TIME_SLOTS.map(slot => {
+      const booked = doctors.every(doc => bookings.some(b => b.doctor.equals(doc._id) && b.timeSlot === slot));
+      return { slot, available: !booked };
+    });
+    res.json({ slots });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// List bookings (admin: all, doctor: their, patient: their)
+app.get('/api/bookings', async (req, res) => {
+  try {
+    const { userId, role, doctorId } = req.query;
+    let filter = {};
+    if (role === 'admin') {
+      // all bookings
+    } else if (role === 'doctor') {
+      filter.doctor = doctorId;
+    } else if (role === 'patient') {
+      filter.user = userId;
+    }
+    const bookings = await Booking.find(filter).populate('doctor user');
+    res.json({ bookings });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Update booking status (accept/reject)
+app.patch('/api/bookings/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    res.json(booking);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 

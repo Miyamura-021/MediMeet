@@ -138,9 +138,17 @@ const Header = ({ activeSection }) => {
                     <div className="text-gray-400 text-xs mb-1">Gender: {user.gender || "-"}</div>
                     <div className="text-gray-400 text-xs mb-1">Phone: {user.phone || "-"}</div>
                   </div>
+                  <Link to="/profile" className="w-full">
+                    <button
+                      className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 rounded-full shadow transition mb-2"
+                      onClick={() => setShowProfile(false)}
+                    >
+                      Profile
+                    </button>
+                  </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 rounded-full shadow transition mt-2"
+                    className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-full shadow transition"
                   >
                     Logout
                   </button>
@@ -187,9 +195,17 @@ const Header = ({ activeSection }) => {
                     <div className="text-teal-400 font-bold text-sm mb-1">{user.name}</div>
                     <div className="text-gray-300 text-xs mb-1">{user.email}</div>
                   </div>
+                  <Link to="/profile" className="w-full">
+                    <button
+                      className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 rounded-lg shadow transition text-sm mb-2"
+                      onClick={() => setShowProfile(false)}
+                    >
+                      Profile
+                    </button>
+                  </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 rounded-lg shadow transition text-sm"
+                    className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg shadow transition text-sm"
                   >
                     Logout
                   </button>

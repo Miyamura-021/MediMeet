@@ -21,19 +21,35 @@ const heroSlides = [
     image: home1,
     align: "left",
     headline: (
-      <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-extrabold text-white leading-tight tracking-tight">
-        Your Health, Our Priority
-      </span>
+      <>
+        {/* MEDIMEET text at top */}
+        <div className="mb-3 flex items-center gap-2">
+          <svg width="40" height="40" className="text-[#2de1c2]" fill="none" viewBox="0 0 48 48">
+            <path d="M24 4v40M4 24h40" stroke="#2de1c2" strokeWidth="3" strokeLinecap="round"/>
+          </svg>
+          <span className="uppercase text-[#2de1c2] text-lg font-semibold tracking-widest">MEDIMEET</span>
+        </div>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight mb-4 text-left">
+          Your Health,<br />
+          Our Priority<br />
+          <span className="text-[#2de1c2]">Expert Care</span>,<br />
+          <span className="text-[#2de1c2]">Just a Click Away</span>
+        </h1>
+      </>
     ),
-    subheadline: (
-      <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl font-extrabold text-teal-400 leading-tight block mb-2 sm:mb-4 tracking-tight">
-        Expert Care, Just a Click Away
-      </span>
-    ),
+    subheadline: null,
     description: (
-      <span className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-6 sm:mb-8 lg:mb-10">
-        Access expert medical care from the comfort of your home. Fast, easy, and secure appointment booking for you and your family.
-      </span>
+      <p className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-8 lg:mb-12 max-w-2xl text-left">
+        Access expert medical care from the comfort of your home.<br />
+        Fast, easy, and secure appointment booking for you and your family.
+      </p>
+    ),
+    button: (
+      <button
+        className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-10 py-4 rounded-xl shadow-lg transition text-lg tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400 text-left"
+      >
+        Book Your Appointment
+      </button>
     ),
     anim: [
       'translate-x-16',
@@ -46,27 +62,37 @@ const heroSlides = [
     id: 2,
     image: home2,
     align: "right",
-    headline: (animating) => (
-      <div className="flex flex-col gap-1 sm:gap-2">
-        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-          <svg width="32" height="32" className="sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-12 xl:h-12 text-teal-400" fill="none" viewBox="0 0 48 48">
+    headline: (
+      <>
+        <div className="flex items-center gap-3 mb-2 justify-end">
+          <svg width="32" height="32" className="text-[#2de1c2]" fill="none" viewBox="0 0 48 48">
             <path d="M24 4v40M4 24h40" stroke="#2de1c2" strokeWidth="3" strokeLinecap="round"/>
           </svg>
-          <span className="uppercase text-white text-xs sm:text-sm md:text-base lg:text-lg font-semibold tracking-widest">We Give You The Best!</span>
+          <span className="uppercase text-white text-lg font-semibold tracking-widest">We Give You The Best!</span>
         </div>
-        {/* Animate each word of the headline */}
-        <div className="flex flex-wrap gap-x-1 sm:gap-x-2 gap-y-1">
-          {"Medical Services That You Can Trust".split(" ").map((word, i) => (
-            <span key={i} className={`inline-block transition-all duration-1000 ${animating ? 'opacity-0 -translate-x-16' : 'opacity-100 translate-x-0'} delay-${200 + i * 120} text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-extrabold text-[#2de1c2] leading-tight tracking-tight`}>{word}</span>
-          ))}
-        </div>
-      </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white leading-tight tracking-tight text-right mb-2">
+          Medical Services<br />
+          <span className="text-[#2de1c2]">That You Can Trust</span>
+        </h1>
+      </>
     ),
     subheadline: null,
-    description: <span className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 lg:mb-8 block">Need professional help? Our support staff will answer your questions.<br/>Visit us Now or Make an Appointment!</span>,
+    description: (
+      <p className="text-gray-300 text-base md:text-lg lg:text-xl xl:text-2xl mb-6 lg:mb-10 text-right max-w-2xl ml-auto">
+        Need professional help? Our support staff<br /> will answer your questions.<br />
+        Visit us Now or Make an Appointment!
+      </p>
+    ),
+    button: (
+      <button
+        className="border-2 border-teal-400 bg-transparent text-teal-400 font-bold px-6 py-3 rounded-lg shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+      >
+        Make an Appointment!
+      </button>
+    ),
     anim: [
-      '-translate-x-16', // description from left
-      '-translate-x-16', // button from left
+      '-translate-x-16',
+      '-translate-x-16',
     ]
   },
 ];
@@ -85,12 +111,31 @@ const Home = () => {
   const [animSub, setAnimSub] = useState(false);
   const [animDesc, setAnimDesc] = useState(false);
   const [animButton, setAnimButton] = useState(false);
+  const [doctors, setDoctors] = useState([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(true);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
 
   useEffect(() => {
-    setTimeout(() => setShowHeadline(true), 800); // was 400
-    setTimeout(() => setShowQuality(true), 1300); // was 700
-    setTimeout(() => setShowSub(true), 1700); // was 900
-    setTimeout(() => setShowButton(true), 2100); // was 1100
+    setTimeout(() => setShowHeadline(true), 800);
+    setTimeout(() => setShowQuality(true), 1300);
+    setTimeout(() => setShowSub(true), 1700);
+    setTimeout(() => setShowButton(true), 2100);
+  }, []);
+
+  // Fetch doctors from backend
+  useEffect(() => {
+    fetch("http://localhost:5000/api/doctors")
+      .then((res) => res.json())
+      .then((data) => {
+        setDoctors(data.doctors || []);
+        setLoadingDoctors(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch doctors:", err);
+        setLoadingDoctors(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -142,32 +187,32 @@ const Home = () => {
   const slide = heroSlides[currentSlide];
 
   // Doctor data array for easy backend integration
-  const doctors = [
-    {
-      id: 1,
-      name: "Dr. Roy Coleman",
-      specialization: "Cardiologist Specialist",
-      image: doc1,
-    },
-    {
-      id: 2,
-      name: "Dr. Andrew Bert",
-      specialization: "Neurology Specialist",
-      image: doc3, // swapped
-    },
-    {
-      id: 3,
-      name: "Dr. Teresa Mayer",
-      specialization: "Senior Pathologist",
-      image: doc2, // swapped
-    },
-    {
-      id: 4,
-      name: "Dr. Robert Burton",
-      specialization: "Senior Dr. at MediMeet",
-      image: doc4,
-    },
-  ];
+  // const doctors = [
+  //   {
+  //     id: 1,
+  //     name: "Dr. Roy Coleman",
+  //     specialization: "Cardiologist Specialist",
+  //     image: doc1,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Dr. Andrew Bert",
+  //     specialization: "Neurology Specialist",
+  //     image: doc3, // swapped
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Dr. Teresa Mayer",
+  //     specialization: "Senior Pathologist",
+  //     image: doc2, // swapped
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Dr. Robert Burton",
+  //     specialization: "Senior Dr. at MediMeet",
+  //     image: doc4,
+  //   },
+  // ];
 
   // Scroll to contact section
   const scrollToContact = () => {
@@ -377,21 +422,27 @@ const Home = () => {
           <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-4 sm:mb-6 max-w-2xl text-center">We offer extensive medical procedures to outbound and inbound patients. We are very proud of achievement of our staff. We all work together to help all our patients for recovery.</p>
         </div>
         <div className="max-w-6xl w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {doctors.map((doc) => (
-            <div key={doc.id} className="bg-[#23282f] rounded shadow-lg overflow-hidden flex flex-col items-center pb-4 sm:pb-6">
-              <div className="w-full aspect-square bg-[#23282f] flex items-center justify-center">
-                <img
-                  src={doc.image}
-                  alt={doc.name}
-                  className="w-full h-full object-cover rounded border-2 border-[#23282f]"
-                />
+          {loadingDoctors ? (
+            <div className="col-span-full text-center text-white">Loading doctors...</div>
+          ) : doctors.length === 0 ? (
+            <div className="col-span-full text-center text-white">No doctors found.</div>
+          ) : (
+            doctors.map((doc) => (
+              <div key={doc._id} className="bg-[#23282f] rounded shadow-lg overflow-hidden flex flex-col items-center pb-4 sm:pb-6">
+                <div className="w-full aspect-square bg-[#23282f] flex items-center justify-center">
+                  <img
+                    src={doc.photo ? `http://localhost:5000${doc.photo}` : '/default-avatar.png'}
+                    alt={doc.name}
+                    className="w-full h-full object-cover rounded border-2 border-[#23282f]"
+                  />
+                </div>
+                <div className="flex-1 flex flex-col items-center mt-3 sm:mt-4 px-2 sm:px-4">
+                  <span className="text-teal-400 font-semibold mb-1 text-xs sm:text-sm text-center">{doc.specialization || 'Specialist'}</span>
+                  <Link to={`/doctors/${doc._id}`} className="text-white font-bold text-base sm:text-lg lg:text-xl hover:text-teal-400 transition text-center block">{doc.name}</Link>
+                </div>
               </div>
-              <div className="flex-1 flex flex-col items-center mt-3 sm:mt-4 px-2 sm:px-4">
-                <span className="text-teal-400 font-semibold mb-1 text-xs sm:text-sm text-center">{doc.specialization}</span>
-                <a href={`/doctors/${doc.id}`} className="text-white font-bold text-base sm:text-lg lg:text-xl hover:text-teal-400 transition text-center block">{doc.name}</a>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div className="w-full flex justify-center mt-8 sm:mt-12">
           <Link

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../components/Header/Header";
+import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 
 const Layout = ({ children }) => {
@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
 
   return (
     <div className="bg-white min-h-screen font-sans flex flex-col min-h-screen">
-      <NavBar activeSection={activeSection} />
+      <Header activeSection={activeSection} />
       <main className="w-full flex-1">{children}</main>
       <Footer />
     </div>

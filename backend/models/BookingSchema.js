@@ -5,16 +5,24 @@ const bookingSchema = new mongoose.Schema(
     doctor: {
       type: mongoose.Types.ObjectId,
       ref: "Doctor",
-      required: true,
+      required: false, // doctor is optional for direct booking
     },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    specialty: {
+      type: String, // for direct booking by field
+      required: false,
+    },
     ticketPrice: { type: String, required: true },
     appointmentDate: {
-      type: Date,
+      type: Date, // date only
+      required: true,
+    },
+    timeSlot: {
+      type: String, // e.g., '9-10am'
       required: true,
     },
     status: {

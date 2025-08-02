@@ -6,6 +6,7 @@ import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 import Doctors from '../pages/Doctors/Doctors';
 import DoctorsDetails from '../pages/Doctors/DoctorsDetails';
+import Profile from '../pages/Profile';
 
 
 const Routers = () => {
@@ -19,6 +20,7 @@ const Routers = () => {
            
             <Route path="/doctors" element={<Doctors />} />
             <Route path="/doctors/:id" element={<DoctorsDetails />} />
+            <Route path="/profile" element={<Profile />} />
         </Routes>
     );
 };
