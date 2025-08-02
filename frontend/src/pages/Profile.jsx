@@ -42,6 +42,60 @@ const Profile = () => {
     }
   }, [user]);
 
+  // Fetch bookings based on user role
+  useEffect(() => {
+    if (user) {
+      fetchBookings();
+    }
+  }, [user]);
+
+  const fetchBookings = async () => {
+    try {
+      let url = `${API_URL}/bookings?`;
+      
+      if (user.role === 'admin') {
+        // Admin sees all bookings
+        url += 'role=admin';
+      } else if (user.role === 'doctor') {
+        // Doctor sees their own bookings
+        url += `role=doctor&doctorId=${user._id}`;
+      } else {
+        // Patient sees their own bookings
+        url += `role=patient&userId=${user._id}`;
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (user.role === 'admin') {
+        setAllBookings(data.bookings || []);
+      } else {
+        setBookings(data.bookings || []);
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+    }
+  };
+
+  const handleBookingStatusUpdate = async (bookingId, status) => {
+    try {
+      const response = await fetch(`${API_URL}/bookings/${bookingId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        // Refresh bookings after status update
+        fetchBookings();
+      }
+    } catch (err) {
+      console.error('Error updating booking status:', err);
+    }
+  };
+
   const handleDeleteDoctor = async (id) => {
     if (!window.confirm('Are you sure you want to delete this doctor?')) return;
     await fetch(`${API_URL}/doctors/${id}`, { method: 'DELETE' });
@@ -144,15 +198,145 @@ const Profile = () => {
       {user.role === 'patient' && (
         <div>
           <h2 className="text-2xl font-semibold mb-4">Your Bookings</h2>
-          {/* TODO: List patient's bookings with status */}
-          <div className="bg-[#23282f] rounded-lg p-4 text-white">(Booking list will appear here)</div>
+          <div className="bg-[#23282f] rounded-lg p-4 text-white">
+            {bookings.length === 0 ? (
+              <p className="text-gray-400">No bookings found.</p>
+            ) : (
+              <div className="space-y-4">
+                {bookings.map((booking) => (
+                  <div key={booking._id} className="bg-[#181d23] rounded-lg p-4 border-l-4 border-teal-400">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-bold text-white">Dr. {booking.doctor?.name || 'Unknown Doctor'}</h3>
+                        <p className="text-gray-400 text-sm">{booking.doctor?.specialization}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${
+                        booking.status === 'accepted' ? 'bg-green-500 text-white' :
+                        booking.status === 'rejected' ? 'bg-red-500 text-white' :
+                        'bg-yellow-500 text-white'
+                      }`}>
+                        {booking.status}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      <p><strong>Date:</strong> {new Date(booking.appointmentDate).toLocaleDateString()}</p>
+                      <p><strong>Time:</strong> {booking.timeSlot}</p>
+                      <p><strong>Reason:</strong> {booking.reason || 'Not specified'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
+
+      {user.role === 'doctor' && (
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Your Booking Requests</h2>
+          <div className="bg-[#23282f] rounded-lg p-4 text-white">
+            {bookings.length === 0 ? (
+              <p className="text-gray-400">No booking requests found.</p>
+            ) : (
+              <div className="space-y-4">
+                {bookings.map((booking) => (
+                  <div key={booking._id} className="bg-[#181d23] rounded-lg p-4 border-l-4 border-teal-400">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-bold text-white">{booking.user?.name || 'Unknown Patient'}</h3>
+                        <p className="text-gray-400 text-sm">{booking.user?.email}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${
+                        booking.status === 'accepted' ? 'bg-green-500 text-white' :
+                        booking.status === 'rejected' ? 'bg-red-500 text-white' :
+                        'bg-yellow-500 text-white'
+                      }`}>
+                        {booking.status}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-300 mb-3">
+                      <p><strong>Date:</strong> {new Date(booking.appointmentDate).toLocaleDateString()}</p>
+                      <p><strong>Time:</strong> {booking.timeSlot}</p>
+                      <p><strong>Reason:</strong> {booking.reason || 'Not specified'}</p>
+                      <p><strong>Phone:</strong> {booking.user?.phone || 'Not provided'}</p>
+                    </div>
+                    {booking.status === 'pending' && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleBookingStatusUpdate(booking._id, 'accepted')}
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-bold"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleBookingStatusUpdate(booking._id, 'rejected')}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {user.role === 'admin' && (
         <div>
           <h2 className="text-2xl font-semibold mb-4">Admin Panel</h2>
-          {/* TODO: List all booking requests with accept/reject controls */}
-          <div className="bg-[#23282f] rounded-lg p-4 text-white mb-6">(All booking requests will appear here)</div>
+          <div className="bg-[#23282f] rounded-lg p-4 text-white mb-6">
+            <h3 className="text-lg font-semibold mb-4">All Booking Requests</h3>
+            {allBookings.length === 0 ? (
+              <p className="text-gray-400">No booking requests found.</p>
+            ) : (
+              <div className="space-y-4">
+                {allBookings.map((booking) => (
+                  <div key={booking._id} className="bg-[#181d23] rounded-lg p-4 border-l-4 border-teal-400">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-bold text-white">
+                          {booking.user?.name || 'Unknown Patient'} → Dr. {booking.doctor?.name || 'Unknown Doctor'}
+                        </h3>
+                        <p className="text-gray-400 text-sm">{booking.doctor?.specialization}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${
+                        booking.status === 'accepted' ? 'bg-green-500 text-white' :
+                        booking.status === 'rejected' ? 'bg-red-500 text-white' :
+                        'bg-yellow-500 text-white'
+                      }`}>
+                        {booking.status}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-300 mb-3">
+                      <p><strong>Date:</strong> {new Date(booking.appointmentDate).toLocaleDateString()}</p>
+                      <p><strong>Time:</strong> {booking.timeSlot}</p>
+                      <p><strong>Reason:</strong> {booking.reason || 'Not specified'}</p>
+                      <p><strong>Patient:</strong> {booking.user?.email} | {booking.user?.phone || 'No phone'}</p>
+                    </div>
+                    {booking.status === 'pending' && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleBookingStatusUpdate(booking._id, 'accepted')}
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-bold"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleBookingStatusUpdate(booking._id, 'rejected')}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <h3 className="text-xl font-semibold mb-2 flex items-center justify-between">
             Manage Doctors
             <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-4 py-2 rounded-lg ml-4" onClick={() => setShowAddDoctor(true)}>

@@ -231,6 +231,93 @@ const Home = () => {
     // ... handle actual submission here ...
   };
 
+  // Handle date change to fetch available time slots
+  const handleDateChange = (e) => {
+    const date = e.target.value;
+    setSelectedDate(date);
+    setSelectedTimeSlot('');
+    
+    if (date) {
+      fetchAvailableTimeSlots(date);
+    } else {
+      setAvailableTimeSlots([]);
+    }
+  };
+
+  // Fetch available time slots for selected date
+  const fetchAvailableTimeSlots = async (date) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/bookings/slots?appointmentDate=${date}`);
+      const data = await response.json();
+      
+      // Generate time slots with availability
+      const timeSlots = [
+        '9-10am', '10-11am', '11-12am', '12-1pm',
+        '1-2pm', '2-3pm', '3-4pm', '4-5pm'
+      ];
+      
+      const availableSlots = timeSlots.map(slot => {
+        const slotData = data.slots?.find(s => s.slot === slot);
+        const isAvailable = slotData?.available !== false;
+        const isPastTime = isTimeSlotPast(slot, date);
+        
+        return {
+          slot,
+          available: isAvailable && !isPastTime,
+          isPastTime
+        };
+      });
+      
+      setAvailableTimeSlots(availableSlots);
+    } catch (err) {
+      console.error('Error fetching time slots:', err);
+      // Default to all slots available if API fails
+      const timeSlots = [
+        '9-10am', '10-11am', '11-12am', '12-1pm',
+        '1-2pm', '2-3pm', '3-4pm', '4-5pm'
+      ];
+      
+      const availableSlots = timeSlots.map(slot => ({
+        slot,
+        available: !isTimeSlotPast(slot, date),
+        isPastTime: isTimeSlotPast(slot, date)
+      }));
+      
+      setAvailableTimeSlots(availableSlots);
+    }
+  };
+
+  // Check if a time slot is in the past for the selected date
+  const isTimeSlotPast = (timeSlot, date) => {
+    const today = new Date();
+    const selectedDate = new Date(date);
+    
+    // If selected date is today, check if time slot is past
+    if (selectedDate.toDateString() === today.toDateString()) {
+      const currentHour = today.getHours();
+      const currentMinute = today.getMinutes();
+      
+      // Extract hour from time slot (e.g., "9-10am" -> 9)
+      const slotHour = parseInt(timeSlot.split('-')[0]);
+      const isAM = timeSlot.includes('am');
+      
+      // Convert to 24-hour format for comparison
+      let slotHour24 = slotHour;
+      if (!isAM && slotHour !== 12) slotHour24 += 12;
+      if (isAM && slotHour === 12) slotHour24 = 0;
+      
+      // Check if current time is past this slot
+      if (currentHour > slotHour24) {
+        return true;
+      } else if (currentHour === slotHour24) {
+        // If same hour, check minutes (slots are 1 hour long, so if we're past the start time, it's too late)
+        return currentMinute > 0;
+      }
+    }
+    
+    return false;
+  };
+
     return (
       <>
         <div className="bg-[#102733] min-h-screen w-full font-sans">
@@ -476,8 +563,15 @@ const Home = () => {
                 <option>Pathology</option>
                 <option>General</option>
               </select>
-              <input type="date" placeholder="Appointment Date" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" />
-              <input type="time" placeholder="Appointment Time" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" />
+              <input type="date" placeholder="Appointment Date" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" onChange={handleDateChange} />
+              <select className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white focus:outline-none text-sm sm:text-base" onChange={(e) => setSelectedTimeSlot(e.target.value)}>
+                <option value="">Select Time Slot</option>
+                {availableTimeSlots.map((slot) => (
+                  <option key={slot.slot} value={slot.slot} disabled={!slot.available}>
+                    {slot.slot} {slot.isPastTime ? '(Past)' : ''}
+                  </option>
+                ))}
+              </select>
               <button type="submit" className="col-span-1 sm:col-span-2 bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded shadow transition text-sm sm:text-base tracking-wide">GET A FREE CONSULTATION</button>
             </form>
             {/* Login Required Popup */}
