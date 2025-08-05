@@ -88,11 +88,18 @@ const Profile = () => {
       });
 
       if (response.ok) {
+        // Show success message
+        const statusText = status === 'accepted' ? 'accepted' : 'rejected';
+        alert(`Booking ${statusText} successfully!`);
         // Refresh bookings after status update
         fetchBookings();
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to update booking: ${errorData.error}`);
       }
     } catch (err) {
       console.error('Error updating booking status:', err);
+      alert('Failed to update booking status. Please try again.');
     }
   };
 

@@ -116,6 +116,15 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    specialty: '',
+    message: ''
+  });
+  const [contactLoading, setContactLoading] = useState(false);
+  const [contactSuccess, setContactSuccess] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setShowHeadline(true), 800);
@@ -126,7 +135,7 @@ const Home = () => {
 
   // Fetch doctors from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/doctors")
+    fetch("http://localhost:5000/api/doctors?featured=true")
       .then((res) => res.json())
       .then((data) => {
         setDoctors(data.doctors || []);
@@ -222,13 +231,58 @@ const Home = () => {
   };
 
   // Contact form submit handler
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
+    
     if (!localStorage.getItem("token")) {
       setShowLoginPopup(true);
       return;
     }
-    // ... handle actual submission here ...
+
+    if (!selectedDate || !selectedTimeSlot || !contactForm.specialty) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    setContactLoading(true);
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const bookingData = {
+        user: user._id,
+        specialty: contactForm.specialty,
+        appointmentDate: selectedDate,
+        timeSlot: selectedTimeSlot,
+        reason: contactForm.message || 'General consultation'
+      };
+
+      const response = await fetch('http://localhost:5000/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to book appointment');
+      }
+
+      const booking = await response.json();
+      setContactSuccess(true);
+      setContactForm({ name: '', email: '', phone: '', specialty: '', message: '' });
+      setSelectedDate('');
+      setSelectedTimeSlot('');
+      setAvailableTimeSlots([]);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => setContactSuccess(false), 3000);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setContactLoading(false);
+    }
   };
 
   // Handle date change to fetch available time slots
@@ -285,6 +339,12 @@ const Home = () => {
       
       setAvailableTimeSlots(availableSlots);
     }
+  };
+
+  // Handle contact form input changes
+  const handleContactInputChange = (e) => {
+    const { name, value } = e.target;
+    setContactForm(prev => ({ ...prev, [name]: value }));
   };
 
   // Check if a time slot is in the past for the selected date
@@ -553,18 +613,54 @@ const Home = () => {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-3 sm:mb-4">Make an Appointment</h2>
             <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-4 sm:mb-6 max-w-xl text-center">Contact us any suitable way and make an appointment with the doctor whose help you need! Visit us at the scheduled time.</p>
             <form className="w-full max-w-xl grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6" onSubmit={handleContactSubmit}>
-              <input type="text" placeholder="Full Name" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" />
-              <input type="email" placeholder="Email Address" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" />
-              <input type="text" placeholder="Phone" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" />
-              <select className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white focus:outline-none text-sm sm:text-base">
-                <option>Select Department</option>
-                <option>Cardiology</option>
-                <option>Neurology</option>
-                <option>Pathology</option>
-                <option>General</option>
+              <input 
+                type="text" 
+                name="name"
+                placeholder="Full Name" 
+                value={contactForm.name}
+                onChange={handleContactInputChange}
+                className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" 
+              />
+              <input 
+                type="email" 
+                name="email"
+                placeholder="Email Address" 
+                value={contactForm.email}
+                onChange={handleContactInputChange}
+                className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" 
+              />
+              <input 
+                type="text" 
+                name="phone"
+                placeholder="Phone" 
+                value={contactForm.phone}
+                onChange={handleContactInputChange}
+                className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" 
+              />
+              <select 
+                name="specialty"
+                value={contactForm.specialty}
+                onChange={handleContactInputChange}
+                className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white focus:outline-none text-sm sm:text-base"
+              >
+                <option value="">Select Department</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Pathology">Pathology</option>
+                <option value="General">General</option>
               </select>
-              <input type="date" placeholder="Appointment Date" className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" onChange={handleDateChange} />
-              <select className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white focus:outline-none text-sm sm:text-base" onChange={(e) => setSelectedTimeSlot(e.target.value)}>
+              <input 
+                type="date" 
+                placeholder="Appointment Date" 
+                value={selectedDate}
+                onChange={handleDateChange}
+                className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base" 
+              />
+              <select 
+                value={selectedTimeSlot}
+                onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                className="col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white focus:outline-none text-sm sm:text-base"
+              >
                 <option value="">Select Time Slot</option>
                 {availableTimeSlots.map((slot) => (
                   <option key={slot.slot} value={slot.slot} disabled={!slot.available}>
@@ -572,8 +668,29 @@ const Home = () => {
                   </option>
                 ))}
               </select>
-              <button type="submit" className="col-span-1 sm:col-span-2 bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded shadow transition text-sm sm:text-base tracking-wide">GET A FREE CONSULTATION</button>
+              <textarea 
+                name="message"
+                placeholder="Reason for visit (optional)" 
+                value={contactForm.message}
+                onChange={handleContactInputChange}
+                rows="3"
+                className="col-span-1 sm:col-span-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded bg-[#23282f] text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base resize-none" 
+              />
+              <button 
+                type="submit" 
+                disabled={contactLoading}
+                className="col-span-1 sm:col-span-2 bg-teal-500 hover:bg-teal-600 disabled:bg-gray-500 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded shadow transition text-sm sm:text-base tracking-wide"
+              >
+                {contactLoading ? 'Booking...' : 'GET A FREE CONSULTATION'}
+              </button>
             </form>
+            {/* Success Message */}
+            {contactSuccess && (
+              <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+                Appointment booked successfully! Check your profile for updates.
+              </div>
+            )}
+            
             {/* Login Required Popup */}
             {showLoginPopup && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50 animate-fadeIn">

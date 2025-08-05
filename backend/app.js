@@ -47,7 +47,7 @@ app.get('/api/doctors', async (req, res) => {
     const featured = req.query.featured === 'true';
     
     let filter = {};
-    if (featured) {
+    if ('featured' in req.query) {
       filter.featured = true;
     }
     
@@ -193,7 +193,7 @@ app.post('/api/auth/login', async (req, res) => {
 // Create a booking (with or without doctor)
 app.post('/api/bookings', async (req, res) => {
   try {
-    const { user, doctor, specialty, appointmentDate, timeSlot } = req.body;
+    const { user, doctor, specialty, appointmentDate, timeSlot, reason } = req.body;
     let assignedDoctor = doctor;
     // If no doctor, auto-assign by specialty and slot
     if (!assignedDoctor && specialty) {
@@ -228,6 +228,7 @@ app.post('/api/bookings', async (req, res) => {
       ticketPrice,
       status: 'pending',
       isPaid: false,
+      reason,
     });
     await booking.save();
     res.status(201).json(booking);
