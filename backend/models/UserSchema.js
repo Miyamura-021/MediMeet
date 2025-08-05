@@ -8,10 +8,10 @@ const UserSchema = new mongoose.Schema({
   photo: { type: String },
   role: {
     type: String,
-    enum: ["patient", "admin"],
+    enum: ["patient", "admin", "doctor"],
     default: "patient",
   },
-  gender: { type: String, enum: ["male", "female", "other"] },
+  gender: { type: String, enum: ["male", "female", "other", "Not specified"] },
   bloodType: { type: String },
   appointments: [{ type: mongoose.Types.ObjectId, ref: "Appointment" }],
 });

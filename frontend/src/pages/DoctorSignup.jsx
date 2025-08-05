@@ -30,10 +30,21 @@ const DoctorSignup = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'doctorId') {
+      // Auto-fill email when doctor profile is selected
+      const selectedDoctor = doctors.find(doctor => doctor._id === value);
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        email: selectedDoctor ? selectedDoctor.email : ''
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -139,9 +150,11 @@ const DoctorSignup = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-white bg-[#23282f] focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                readOnly
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-white bg-[#23282f] bg-gray-700 focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
+                placeholder="Email (auto-filled from doctor profile)"
               />
+              <small className="text-gray-400 text-xs mt-1 block">Email is auto-filled from the selected doctor profile</small>
             </div>
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
