@@ -579,13 +579,13 @@ const Home = () => {
                 <div className="w-full aspect-square bg-[#23282f] flex items-center justify-center">
                   <img
                     src={doc.photo ? `http://localhost:5000${doc.photo}` : '/default-avatar.png'}
-                    alt={doc.name}
+                    alt={`Dr. ${doc.name}`}
                     className="w-full h-full object-cover rounded border-2 border-[#23282f]"
                   />
                 </div>
                 <div className="flex-1 flex flex-col items-center mt-3 sm:mt-4 px-2 sm:px-4">
                   <span className="text-teal-400 font-semibold mb-1 text-xs sm:text-sm text-center">{doc.specialization || 'Specialist'}</span>
-                  <Link to={`/doctors/${doc._id}`} className="text-white font-bold text-base sm:text-lg lg:text-xl hover:text-teal-400 transition text-center block">{doc.name}</Link>
+                  <Link to={`/doctors/${doc._id}`} className="text-white font-bold text-base sm:text-lg lg:text-xl hover:text-teal-400 transition text-center block">Dr. {doc.name}</Link>
                 </div>
               </div>
             ))

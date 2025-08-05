@@ -29,6 +29,15 @@ const DoctorForm = ({ initialValues = {}, onSubmit, loading, error, onCancel }) 
     } else if (name.startsWith('social.')) {
       const key = name.split('.')[1];
       setFields((prev) => ({ ...prev, social: { ...prev.social, [key]: value } }));
+    } else if (name === 'name') {
+      // Handle doctor name - remove "Dr." prefix if user types it
+      let cleanName = value;
+      if (value.startsWith('Dr. ')) {
+        cleanName = value.substring(4); // Remove "Dr. " prefix
+      } else if (value.startsWith('Dr.')) {
+        cleanName = value.substring(3); // Remove "Dr." prefix
+      }
+      setFields((prev) => ({ ...prev, [name]: cleanName }));
     } else {
       setFields((prev) => ({ ...prev, [name]: value }));
     }
@@ -41,7 +50,7 @@ const DoctorForm = ({ initialValues = {}, onSubmit, loading, error, onCancel }) 
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <input type="text" name="name" placeholder="Name" value={fields.name} onChange={handleChange} className="rounded p-2 bg-[#181d23] text-white" required />
+      <input type="text" name="name" placeholder="Doctor Name (without Dr.)" value={fields.name} onChange={handleChange} className="rounded p-2 bg-[#181d23] text-white" required />
       <input type="email" name="email" placeholder="Email" value={fields.email} onChange={handleChange} className="rounded p-2 bg-[#181d23] text-white" required />
       <input type="text" name="phone" placeholder="Phone" value={fields.phone} onChange={handleChange} className="rounded p-2 bg-[#181d23] text-white" />
       <input type="file" name="photo" accept="image/*" onChange={handleChange} className="rounded p-2 bg-[#181d23] text-white" />

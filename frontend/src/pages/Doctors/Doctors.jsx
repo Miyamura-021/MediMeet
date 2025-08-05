@@ -61,7 +61,7 @@ const Doctors = () => {
             )}
           </div>
           {/* Name */}
-          <h3 className="text-white font-bold text-sm sm:text-base mb-1 text-center">{doctor.name}</h3>
+          <h3 className="text-white font-bold text-sm sm:text-base mb-1 text-center">Dr. {doctor.name}</h3>
           {/* Specialization */}
           <span className="text-teal-400 font-semibold mb-2 text-xs text-center block">{doctor.specialization || "General Practitioner"}</span>
           {/* Bio */}
