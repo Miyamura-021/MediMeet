@@ -358,9 +358,9 @@ const Profile = () => {
                 {doctors.map((doctor) => (
                   <div key={doctor._id} className="bg-[#181d23] rounded-lg p-4 flex flex-col gap-2">
                     <div className="flex items-center gap-3">
-                      {doctor.photo && <img src={`http://localhost:5000${doctor.photo}`} alt={doctor.name} className="w-12 h-12 rounded-full object-cover" />}
+                      {doctor.photo && <img src={`http://localhost:5000${doctor.photo}`} alt={`Dr. ${doctor.name}`} className="w-12 h-12 rounded-full object-cover" />}
                       <div>
-                        <div className="font-bold text-lg">{doctor.name}</div>
+                        <div className="font-bold text-lg">Dr. {doctor.name}</div>
                         <div className="text-teal-400 text-sm">{doctor.specialization}</div>
                       </div>
                     </div>
