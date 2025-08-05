@@ -141,7 +141,7 @@ app.delete('/api/doctors/:id', async (req, res) => {
 
 app.post('/api/auth/signup', async (req, res) => {
   try {
-    const { name, email, password, phone, gender } = req.body;
+    const { name, email, password, phone, gender, role = 'patient' } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
@@ -154,10 +154,53 @@ app.post('/api/auth/signup', async (req, res) => {
       password: hashedPassword,
       phone,
       gender,
-      role: 'patient',
+      role,
     });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Doctor registration - links to existing doctor profile
+app.post('/api/auth/doctor-signup', async (req, res) => {
+  try {
+    const { email, password, doctorId } = req.body;
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    
+    // Find the doctor profile
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(400).json({ error: 'Doctor profile not found' });
+    }
+    
+    // Check if doctor already has an account
+    const existingDoctorUser = await User.findOne({ email: doctor.email });
+    if (existingDoctorUser) {
+      return res.status(400).json({ error: 'Doctor already has an account' });
+    }
+    
+    // Create user account for doctor
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    const newUser = new User({
+      name: doctor.name,
+      email: email || doctor.email, // Use provided email or doctor's email
+      password: hashedPassword,
+      phone: doctor.phone,
+      gender: 'Not specified',
+      role: 'doctor',
+    });
+    
+    await newUser.save();
+    res.status(201).json({ message: 'Doctor account created successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

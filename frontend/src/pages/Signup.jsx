@@ -17,6 +17,13 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setMessage("");
+    
+    // If doctor is selected, redirect to doctor signup page
+    if (role === 'doctor') {
+      navigate('/doctor-signup');
+      return;
+    }
+    
     try {
       const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
@@ -27,7 +34,7 @@ const Signup = () => {
           password,
           phone,
           gender: gender.toLowerCase(),
-          role: role.toLowerCase(),
+          role: 'patient', // Only patients can signup here
         }),
       });
       const data = await res.json();
@@ -112,8 +119,8 @@ const Signup = () => {
                   value={role}
                   onChange={e => setRole(e.target.value)}
                 >
-                  <option>Patient</option>
-                  <option>Doctor</option>
+                  <option value="patient">Patient</option>
+                  <option value="doctor">Doctor</option>
                 </select>
               </div>
               <div className="flex-1">
