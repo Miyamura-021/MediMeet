@@ -11,7 +11,9 @@ const Layout = ({ children }) => {
         { id: "home", min: 0 },
         { id: "about" },
         { id: "services" },
+        { id: "doctors" },
         { id: "contact" },
+        { id: "blog" },
       ];
       const scrollY = window.scrollY || window.pageYOffset;
       const buffer = 120; // adjust for sticky nav height

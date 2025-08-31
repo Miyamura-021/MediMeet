@@ -9,7 +9,7 @@ const navLinks = [
   { name: "Services", path: "#services" },
   { name: "Our Doctors", path: "#doctors" },
   { name: "Contact Us", path: "#contact" },
-  { name: "Blog", path: "/blog" },
+  { name: "Blog", path: "#blog" },
 ];
 
 const API_BASE = 'http://localhost:5000';

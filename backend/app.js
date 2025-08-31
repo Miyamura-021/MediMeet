@@ -21,6 +21,12 @@ app.use('/uploads', express.static('uploads'));
 mongoose.connect('mongodb://127.0.0.1:27017/appointment_booking', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('Connected to MongoDB successfully');
+})
+.catch((err) => {
+  console.error('MongoDB connection error:', err);
 });
 
 // Multer setup for image upload
@@ -419,12 +425,26 @@ app.patch('/api/bookings/:id/status', async (req, res) => {
 // Delete a booking (admin only)
 app.delete('/api/bookings/:id', async (req, res) => {
   try {
+    console.log('Delete booking request for ID:', req.params.id);
+    
+    // Check if the ID is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      console.log('Invalid booking ID format:', req.params.id);
+      return res.status(400).json({ error: 'Invalid booking ID format' });
+    }
+    
     const booking = await Booking.findByIdAndDelete(req.params.id);
+    console.log('Booking found and deleted:', booking);
+    
     if (!booking) {
+      console.log('Booking not found for ID:', req.params.id);
       return res.status(404).json({ error: 'Booking not found' });
     }
+    
+    console.log('Booking deleted successfully');
     res.json({ message: 'Booking deleted successfully' });
   } catch (err) {
+    console.error('Error deleting booking:', err);
     res.status(500).json({ error: err.message });
   }
 });

@@ -735,70 +735,98 @@ const Home = () => {
       </section>
 
       {/* Blog Section */}
-      <section id="blog" className="relative w-full bg-[#23282f] py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-0 flex justify-center items-center">
-        <div className="max-w-6xl w-full">
+      <section id="blog" className="relative w-full bg-[#23282f] py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           {/* Section Header */}
-          <div className="text-center mb-12 sm:mb-16">
-            <span className="uppercase text-teal-400 text-xs sm:text-sm font-semibold tracking-widest mb-2">Our Blog</span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4">Recent Articles and News</h2>
-            <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-3xl mx-auto mb-6">
-              Since its founding, MediMeet has been providing its patients with full medical care, encompassing outpatient services, neurology, laboratory, imaging diagnostics and more.
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 rounded-full px-4 py-2 mb-6">
+              <svg className="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+              <span className="text-sm font-semibold text-teal-400 uppercase tracking-wider">
+                Medical Insights
+              </span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+              Latest Medical <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Articles</span>
+            </h2>
+            <p className="text-gray-300 text-lg lg:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
+              Discover evidence-based medical research, expert health advice, and cutting-edge healthcare insights curated by our team of medical professionals.
             </p>
             <div className="flex justify-center">
-              <Link to="/blog" className="bg-[#181d23] hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-3 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 inline-block">
-                MORE ARTICLES
+              <Link to="/blog" className="inline-flex items-center gap-2 px-8 py-3 border-2 border-teal-400 bg-transparent text-teal-400 font-bold rounded shadow transition text-base tracking-wide hover:bg-teal-500 hover:text-white">
+                <span>View All Articles</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
           </div>
 
           {/* Blog Articles Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {featuredBlogPosts.length === 0 ? (
-              <div className="col-span-full text-center text-gray-400 py-12">
-                <p className="text-lg">No blog posts available yet.</p>
-                <p className="text-sm mt-2">Check back soon for medical articles and news!</p>
+              <div className="col-span-full text-center py-16">
+                <div className="bg-[#181d23] rounded-xl p-8 max-w-md mx-auto">
+                  <svg className="w-16 h-16 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                  </svg>
+                  <h3 className="text-xl font-semibold text-white mb-2">No Articles Yet</h3>
+                  <p className="text-gray-400">Check back soon for medical insights and health news.</p>
+                </div>
               </div>
             ) : (
               featuredBlogPosts.map((post) => (
-                <article key={post._id} className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
-                  <div className="relative overflow-hidden">
+                <article key={post._id} className="bg-[#181d23] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-700/50 flex h-56">
+                  {/* Image on the left */}
+                  <div className="relative w-56 flex-shrink-0">
                     <img 
                       src={post.image ? `http://localhost:5000${post.image}` : doc1} 
                       alt={post.title} 
-                      className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                      {new Date(post.createdAt).toLocaleDateString('en-US', { 
-                        day: 'numeric', 
-                        month: 'short', 
-                        year: 'numeric' 
-                      })}
+                    <div className="absolute top-4 left-4">
+                      <div className="bg-teal-500 text-white px-3 py-1 rounded text-sm font-medium shadow-lg">
+                        {post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', { 
+                          day: 'numeric', 
+                          month: 'short', 
+                          year: 'numeric' 
+                        }) : 'Recent'}
+                      </div>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
-                      {post.title}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                      <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        {post.comments || 0} Comments
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        {post.author || 'Admin'}
-                      </span>
+                  
+                  {/* Content on the right */}
+                  <div className="flex-1 p-6 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                        <span className="flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          {post.author || 'Medical Expert'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          {post.comments || 0} Comments
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200 line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
+                        {post.excerpt || post.content?.substring(0, 120) + '...'}
+                      </p>
                     </div>
-                    <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
-                      {post.excerpt || post.content?.substring(0, 150) + '...'}
-                    </p>
-                    <Link to={`/blog/${post.slug || post._id}`} className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
+                    
+                    <Link 
+                      to={`/blog/${post.slug || post._id}`} 
+                      className="inline-flex items-center text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 group/link mt-3"
+                    >
                       Read More
-                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>

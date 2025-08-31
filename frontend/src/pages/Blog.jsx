@@ -51,15 +51,20 @@ const Blog = () => {
               <article key={post.id} className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
                 <div className="relative overflow-hidden">
                   <img 
-                    src={post.image} 
+                    src={post.image ? `http://localhost:5000${post.image}` : doc1} 
                     alt={post.title} 
                     className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                    style={{ objectPosition: 'top center' }}
                   />
                   <div className="absolute top-3 left-3 bg-teal-500 text-white px-2 py-1 rounded text-xs font-semibold">
                     {post.category}
                   </div>
                   <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                    {post.date}
+                    {new Date(post.createdAt).toLocaleDateString('en-US', { 
+                      day: 'numeric', 
+                      month: 'short', 
+                      year: 'numeric' 
+                    })}
                   </div>
                 </div>
                 <div className="p-6">
@@ -71,7 +76,7 @@ const Blog = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
-                      {post.comments} Comments
+                      {post.comments || 0} Comments
                     </span>
                     <span className="flex items-center gap-1">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -33,17 +33,29 @@ const Profile = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [showAddBlog, setShowAddBlog] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
+  
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [confirmCallback, setConfirmCallback] = useState(null);
 
   const normalizePhoto = (p) => (p && p.startsWith('/uploads') ? `${API_BASE}${p}` : p);
 
   useEffect(() => {
     // Get user from localStorage
     const userData = localStorage.getItem('user');
+    console.log('User data from localStorage:', userData);
+    
     if (!userData) {
+      console.log('No user data found, redirecting to login');
       navigate('/login');
       return;
     }
+    
     const parsed = JSON.parse(userData);
+    console.log('Parsed user data:', parsed);
+    console.log('User role:', parsed.role);
+    
     parsed.photo = normalizePhoto(parsed.photo);
     setUser(parsed);
   }, [navigate]);
@@ -138,25 +150,28 @@ const Profile = () => {
   };
 
   const handleDeleteDoctor = async (id) => {
-    if (!confirm('Are you sure you want to delete this doctor?')) return;
-    
-    try {
-      const response = await fetch(`${API_URL}/doctors/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        alert('Doctor deleted successfully!');
-        // Refresh doctors list
-        setDoctors(prev => prev.filter(d => d._id !== id));
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to delete doctor: ${errorData.error}`);
+    showConfirmDialog(
+      'Are you sure you want to delete this doctor?',
+      async () => {
+        try {
+          const response = await fetch(`${API_URL}/doctors/${id}`, {
+            method: 'DELETE',
+          });
+          
+          if (response.ok) {
+            alert('Doctor deleted successfully!');
+            // Refresh doctors list
+            setDoctors(prev => prev.filter(d => d._id !== id));
+          } else {
+            const errorData = await response.json();
+            alert(`Failed to delete doctor: ${errorData.error}`);
+          }
+        } catch (err) {
+          console.error('Error deleting doctor:', err);
+          alert('Failed to delete doctor. Please try again.');
+        }
       }
-    } catch (err) {
-      console.error('Error deleting doctor:', err);
-      alert('Failed to delete doctor. Please try again.');
-    }
+    );
   };
 
   const handleAddDoctor = async (doctorData) => {
@@ -395,24 +410,27 @@ const Profile = () => {
   };
 
   const handleDeleteRecord = async (id) => {
-    if (!confirm('Are you sure you want to delete this record?')) return;
-    
-    try {
-      const response = await fetch(`${API_URL}/appointment-records/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        setAppointmentRecords(prev => prev.filter(r => r.id !== id));
-        alert('Record deleted successfully!');
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to delete record: ${errorData.error}`);
+    showConfirmDialog(
+      'Are you sure you want to delete this record?',
+      async () => {
+        try {
+          const response = await fetch(`${API_URL}/appointment-records/${id}`, {
+            method: 'DELETE',
+          });
+          
+          if (response.ok) {
+            setAppointmentRecords(prev => prev.filter(r => r.id !== id));
+            alert('Record deleted successfully!');
+          } else {
+            const errorData = await response.json();
+            alert(`Failed to delete record: ${errorData.error}`);
+          }
+        } catch (err) {
+          console.error('Error deleting record:', err);
+          alert('Failed to delete record. Please try again.');
+        }
       }
-    } catch (err) {
-      console.error('Error deleting record:', err);
-      alert('Failed to delete record. Please try again.');
-    }
+    );
   };
 
   const handleAddColumn = async () => {
@@ -445,25 +463,28 @@ const Profile = () => {
   };
 
   const handleDeleteColumn = async (columnName) => {
-    if (!confirm(`Are you sure you want to delete the column "${columnName}"?`)) return;
-    
-    try {
-      const response = await fetch(`${API_URL}/appointment-records/columns/${columnName}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAppointmentRecords(data.records);
-        alert('Column deleted successfully!');
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to delete column: ${errorData.error}`);
+    showConfirmDialog(
+      `Are you sure you want to delete the column "${columnName}"?`,
+      async () => {
+        try {
+          const response = await fetch(`${API_URL}/appointment-records/columns/${columnName}`, {
+            method: 'DELETE',
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            setAppointmentRecords(data.records);
+            alert('Column deleted successfully!');
+          } else {
+            const errorData = await response.json();
+            alert(`Failed to delete column: ${errorData.error}`);
+          }
+        } catch (err) {
+          console.error('Error deleting column:', err);
+          alert('Failed to delete column. Please try again.');
+        }
       }
-    } catch (err) {
-      console.error('Error deleting column:', err);
-      alert('Failed to delete column. Please try again.');
-    }
+    );
   };
 
   // Blog Management Functions
@@ -550,24 +571,27 @@ const Profile = () => {
   };
 
   const handleDeleteBlog = async (id) => {
-    if (!confirm('Are you sure you want to delete this blog post?')) return;
-    
-    try {
-      const response = await fetch(`${API_URL}/blog/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        setBlogPosts(prev => prev.filter(b => b.id !== id));
-        alert('Blog post deleted successfully!');
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to delete blog post: ${errorData.error}`);
+    showConfirmDialog(
+      'Are you sure you want to delete this blog post?',
+      async () => {
+        try {
+          const response = await fetch(`${API_URL}/blog/${id}`, {
+            method: 'DELETE',
+          });
+          
+          if (response.ok) {
+            setBlogPosts(prev => prev.filter(b => b.id !== id));
+            alert('Blog post deleted successfully!');
+          } else {
+            const errorData = await response.json();
+            alert(`Failed to delete blog post: ${errorData.error}`);
+          }
+        } catch (err) {
+          console.error('Error deleting blog post:', err);
+          alert('Failed to delete blog post. Please try again.');
+        }
       }
-    } catch (err) {
-      console.error('Error deleting blog post:', err);
-      alert('Failed to delete blog post. Please try again.');
-    }
+    );
   };
 
   const handleToggleFeatured = async (id, featured) => {
@@ -592,30 +616,56 @@ const Profile = () => {
     }
   };
 
+  // Custom confirmation modal
+  const showConfirmDialog = (message, onConfirm) => {
+    console.log('showConfirmDialog called with message:', message);
+    setConfirmMessage(message);
+    setConfirmCallback(() => onConfirm);
+    setShowConfirmModal(true);
+  };
+
   // Delete booking function
   const handleDeleteBooking = async (id) => {
-    if (!confirm('Are you sure you want to delete this booking?')) return;
+    console.log('handleDeleteBooking called with ID:', id);
+    console.log('API_URL:', API_URL);
     
-    try {
-      const response = await fetch(`${API_URL}/bookings/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        if (user.role === 'admin') {
-          setAllBookings(prev => prev.filter(b => b._id !== id));
-        } else {
-          setBookings(prev => prev.filter(b => b._id !== id));
+    showConfirmDialog(
+      'Are you sure you want to delete this booking?',
+      async () => {
+        console.log('Starting delete process...');
+        try {
+          const url = `${API_URL}/bookings/${id}`;
+          console.log('Making DELETE request to:', url);
+          
+          const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          console.log('Response received:', response);
+          console.log('Response status:', response.status);
+          console.log('Response ok:', response.ok);
+          
+          if (response.ok) {
+            if (user.role === 'admin') {
+              setAllBookings(prev => prev.filter(b => b._id !== id));
+            } else {
+              setBookings(prev => prev.filter(b => b._id !== id));
+            }
+            alert('Booking deleted successfully!');
+          } else {
+            const errorData = await response.json();
+            console.error('Error response data:', errorData);
+            alert(`Failed to delete booking: ${errorData.error}`);
+          }
+        } catch (err) {
+          console.error('Error deleting booking:', err);
+          alert('Failed to delete booking. Please try again.');
         }
-        alert('Booking deleted successfully!');
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to delete booking: ${errorData.error}`);
       }
-    } catch (err) {
-      console.error('Error deleting booking:', err);
-      alert('Failed to delete booking. Please try again.');
-    }
+    );
   };
 
   return (
@@ -911,9 +961,17 @@ const Profile = () => {
                           </button>
                         </>
                       )}
-                      {user.role === 'admin' && (
+                      {(() => {
+                        console.log('Rendering delete button, user role:', user.role);
+                        return user.role === 'admin';
+                      })() && (
                         <button
-                          onClick={() => handleDeleteBooking(booking._id)}
+                          onClick={() => {
+                            console.log('Delete button clicked!');
+                            console.log('Booking ID:', booking._id);
+                            console.log('User role:', user.role);
+                            handleDeleteBooking(booking._id);
+                          }}
                           className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-200 hover:scale-105 flex items-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1264,6 +1322,47 @@ const Profile = () => {
                     onSubmit={handleEditBlog} 
                     onCancel={() => setEditingBlog(null)} 
                   />
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Confirmation Modal */}
+          {showConfirmModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-[#181d23] border-2 border-teal-400 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">Confirm Deletion</h3>
+                  <p className="text-gray-300 mb-6">{confirmMessage}</p>
+                  <div className="flex gap-4 justify-center">
+                    <button
+                      onClick={() => {
+                        setShowConfirmModal(false);
+                        setConfirmMessage('');
+                        setConfirmCallback(null);
+                      }}
+                      className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowConfirmModal(false);
+                        setConfirmMessage('');
+                        if (confirmCallback) {
+                          confirmCallback();
+                        }
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
