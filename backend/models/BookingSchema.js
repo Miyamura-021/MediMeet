@@ -16,7 +16,8 @@ const bookingSchema = new mongoose.Schema(
       type: String, // for direct booking by field
       required: false,
     },
-    ticketPrice: { type: String, required: true },
+    // changed: make ticketPrice optional with a safe default
+    ticketPrice: { type: String, default: '0' },
     appointmentDate: {
       type: Date, // date only
       required: true,

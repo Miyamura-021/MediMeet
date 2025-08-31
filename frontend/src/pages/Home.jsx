@@ -125,6 +125,7 @@ const Home = () => {
   });
   const [contactLoading, setContactLoading] = useState(false);
   const [contactSuccess, setContactSuccess] = useState(false);
+  const [featuredBlogPosts, setFeaturedBlogPosts] = useState([]);
 
   useEffect(() => {
     setTimeout(() => setShowHeadline(true), 800);
@@ -144,6 +145,18 @@ const Home = () => {
       .catch((err) => {
         console.error("Failed to fetch doctors:", err);
         setLoadingDoctors(false);
+      });
+  }, []);
+
+  // Fetch featured blog posts
+  useEffect(() => {
+    fetch("http://localhost:5000/api/blog?featured=true")
+      .then((res) => res.json())
+      .then((data) => {
+        setFeaturedBlogPosts(data.posts || []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch featured blog posts:", err);
       });
   }, []);
 
@@ -448,7 +461,7 @@ const Home = () => {
               {/* Description */}
               <div className={`transition-all duration-700 ${animDesc ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
                 {slide.description}
-              </div>
+            </div>
               {/* Button */}
               <div className={`transition-all duration-700 ${animButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 <button
@@ -457,9 +470,9 @@ const Home = () => {
                 >
                   MAKE AN APPOINTMENT!
                 </button>
-              </div>
+          </div>
             </>
-          )}
+        )}
         </div>
         {/* Carousel Arrows */}
         <button
@@ -576,14 +589,14 @@ const Home = () => {
           ) : (
             doctors.map((doc) => (
               <div key={doc._id} className="bg-[#23282f] rounded shadow-lg overflow-hidden flex flex-col items-center pb-4 sm:pb-6">
-                <div className="w-full aspect-square bg-[#23282f] flex items-center justify-center">
-                  <img
+              <div className="w-full aspect-square bg-[#23282f] flex items-center justify-center">
+                <img
                     src={doc.photo ? `http://localhost:5000${doc.photo}` : '/default-avatar.png'}
                     alt={`Dr. ${doc.name}`}
-                    className="w-full h-full object-cover rounded border-2 border-[#23282f]"
-                  />
-                </div>
-                <div className="flex-1 flex flex-col items-center mt-3 sm:mt-4 px-2 sm:px-4">
+                  className="w-full h-full object-cover rounded border-2 border-[#23282f]"
+                />
+              </div>
+              <div className="flex-1 flex flex-col items-center mt-3 sm:mt-4 px-2 sm:px-4">
                   <span className="text-teal-400 font-semibold mb-1 text-xs sm:text-sm text-center">{doc.specialization || 'Specialist'}</span>
                   <Link to={`/doctors/${doc._id}`} className="text-white font-bold text-base sm:text-lg lg:text-xl hover:text-teal-400 transition text-center block">Dr. {doc.name}</Link>
                 </div>
@@ -600,6 +613,8 @@ const Home = () => {
           </Link>
         </div>
       </section>
+
+
       {/* Contact Section */}
       <section id="contact" ref={contactRef} className="relative w-full bg-[#181d23] py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-0 flex justify-center items-center">
         <div className="max-w-5xl w-full flex flex-col lg:flex-row items-center gap-8 sm:gap-12 md:gap-20 bg-[#181d23] rounded-2xl shadow-2xl overflow-hidden">
@@ -708,6 +723,226 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Blog Section */}
+      <section id="blog" className="relative w-full bg-[#23282f] py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-0 flex justify-center items-center">
+        <div className="max-w-6xl w-full">
+          {/* Section Header */}
+          <div className="text-center mb-12 sm:mb-16">
+            <span className="uppercase text-teal-400 text-xs sm:text-sm font-semibold tracking-widest mb-2">Our Blog</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4">Recent Articles and News</h2>
+            <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-3xl mx-auto">
+              Since its founding, MediMeet has been providing its patients with full medical care, encompassing outpatient services, neurology, laboratory, imaging diagnostics and more.
+            </p>
+            <div className="mt-6">
+              <Link to="/blog" className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-3 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 inline-block">
+                MORE ARTICLES
+              </Link>
+            </div>
+          </div>
+
+          {/* Blog Articles Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            {featuredBlogPosts.slice(0, 4).map((post, index) => (
+              <article key={post.id} className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
+                <div className="relative overflow-hidden">
+                  <img 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
+                    {post.date}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
+                    {post.title}
+                  </h3>
+                  <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                      {post.comments} Comments
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      {post.author}
+                    </span>
+                  </div>
+                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
+                    {post.excerpt}
+                  </p>
+                  <Link to={`/blog/${post.slug}`} className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
+                    Read More
+                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </article>
+            ))}
+
+            {/* Article 2 */}
+            <article className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src={doc2} 
+                  alt="Surgical Equipment" 
+                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
+                  12 Nov 2024
+                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
+                  Implant Surgical Equipment Technology
+                </h3>
+                <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    5 Comments
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Dr. Sarah
+                  </span>
+                </div>
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
+                </p>
+                <Link to="/blog/surgical-equipment-technology" className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
+                  Read More
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </article>
+
+            {/* Article 3 */}
+            <article className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src={doc3} 
+                  alt="Fitness and Health" 
+                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
+                  20 Nov 2024
+                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
+                  The Benefits of Middle-Age Fitness
+                </h3>
+                <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    2 Comments
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Dr. Michael
+                  </span>
+                </div>
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
+                </p>
+                <Link to="/blog/middle-age-fitness-benefits" className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
+                  Read More
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </article>
+
+            {/* Article 4 */}
+            <article className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src={doc4} 
+                  alt="Healthy Eating" 
+                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
+                  23 Nov 2024
+                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
+                  Good Reasons to Break the Fast-Food Habit
+                </h3>
+                <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    7 Comments
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Dr. Emily
+                  </span>
+                </div>
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
+                </p>
+                <Link to="/blog/break-fast-food-habit" className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
+                  Read More
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </article>
+          </div>
+
+          {/* Newsletter Subscription */}
+          <div className="mt-16 sm:mt-20 bg-gradient-to-r from-teal-500/10 to-blue-500/10 rounded-2xl p-8 sm:p-12 text-center border border-teal-500/20">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Stay Updated with Medical News</h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-6 max-w-2xl mx-auto">
+              Subscribe to our newsletter and get the latest health tips, medical research updates, and wellness advice delivered to your inbox.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <input 
+                type="email" 
+                placeholder="Enter your email address" 
+                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 transition-colors duration-200"
+              />
+              <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-3 rounded-lg transition-all duration-200 hover:scale-105 shadow-lg">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Scroll to Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 right-6 bg-teal-500 hover:bg-teal-600 text-white w-12 h-12 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-40 flex items-center justify-center"
+        aria-label="Scroll to top"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </button>
         </div>
       </>
     );

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Footer = () => (
-  <footer className="bg-[#181d23] border-t-2 border-teal-400 mt-16 pt-12 pb-6 text-gray-300 font-sans">
+  <footer className="bg-[#181d23] border-t-2 border-teal-400 pt-12 pb-6 text-gray-300 font-sans">
     <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
       {/* Brand & Social */}
       <div>

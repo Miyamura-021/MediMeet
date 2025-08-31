@@ -12,6 +12,8 @@ const navLinks = [
   { name: "Blog", path: "/blog" },
 ];
 
+const API_BASE = 'http://localhost:5000';
+
 const Header = ({ activeSection }) => {
   const location = useLocation();
   const [showProfile, setShowProfile] = useState(false);
@@ -25,6 +27,12 @@ const Header = ({ activeSection }) => {
       return null;
     }
   })();
+
+  // Normalizes stored photo path to absolute URL
+  const getPhotoUrl = (p) => {
+    if (!p) return '';
+    return p.startsWith('/uploads') ? `${API_BASE}${p}` : p;
+  };
   
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -115,7 +123,7 @@ const Header = ({ activeSection }) => {
                 title={user.name}
               >
                 {user.photo ? (
-                  <img src={user.photo} alt="avatar" className="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover" />
+                  <img src={getPhotoUrl(user.photo)} alt="avatar" className="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover" />
                 ) : (
                   <span className="uppercase text-base lg:text-lg font-bold">
                     {user.name && user.name[0]}
@@ -127,7 +135,7 @@ const Header = ({ activeSection }) => {
                 <div className="absolute right-0 mt-3 w-64 lg:w-72 bg-[#181d23] border-2 border-teal-400 rounded-2xl shadow-2xl p-4 lg:p-6 z-50 animate-fadeIn">
                   <div className="flex flex-col items-center mb-4">
                     {user.photo ? (
-                      <img src={user.photo} alt="avatar" className="w-14 h-14 lg:w-16 lg:h-16 rounded-full object-cover mb-2 border-2 border-teal-400" />
+                      <img src={getPhotoUrl(user.photo)} alt="avatar" className="w-14 h-14 lg:w-16 lg:h-16 rounded-full object-cover mb-2 border-2 border-teal-400" />
                     ) : (
                       <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-teal-500 flex items-center justify-center text-white text-2xl lg:text-3xl font-extrabold mb-2">
                         {user.name && user.name[0]}
@@ -174,7 +182,7 @@ const Header = ({ activeSection }) => {
                 title={user.name}
               >
                 {user.photo ? (
-                  <img src={user.photo} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                  <img src={getPhotoUrl(user.photo)} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
                 ) : (
                   <span className="uppercase text-sm font-bold">
                     {user.name && user.name[0]}
@@ -186,7 +194,7 @@ const Header = ({ activeSection }) => {
                 <div className="absolute right-0 mt-2 w-56 bg-[#181d23] border-2 border-teal-400 rounded-xl shadow-2xl p-4 z-50">
                   <div className="flex flex-col items-center mb-3">
                     {user.photo ? (
-                      <img src={user.photo} alt="avatar" className="w-12 h-12 rounded-full object-cover mb-2 border-2 border-teal-400" />
+                      <img src={getPhotoUrl(user.photo)} alt="avatar" className="w-12 h-12 rounded-full object-cover mb-2 border-2 border-teal-400" />
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-teal-500 flex items-center justify-center text-white text-xl font-extrabold mb-2">
                         {user.name && user.name[0]}

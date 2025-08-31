@@ -24,6 +24,36 @@
   }
 }
 
+/* Blog utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Global select option styling */
+select option {
+  background-color: #374151 !important;
+  color: white !important;
+}
+
+select option:hover {
+  background-color: #4B5563 !important;
+}
+
+/* Ensure proper contrast for form elements */
+select, input[type="date"], input[type="time"] {
+  color-scheme: dark;
+}
+
 @media only screen and (max-width: 1024) {
   .container {
     @apply w-full

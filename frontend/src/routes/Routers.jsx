@@ -8,6 +8,8 @@ import DoctorSignup from '../pages/DoctorSignup';
 import Doctors from '../pages/Doctors/Doctors';
 import DoctorsDetails from '../pages/Doctors/DoctorsDetails';
 import Profile from '../pages/Profile';
+import Blog from '../pages/Blog';
+import BlogDetail from '../pages/BlogDetail';
 
 
 const Routers = () => {
@@ -23,6 +25,9 @@ const Routers = () => {
             <Route path="/doctors" element={<Doctors />} />
             <Route path="/doctors/:id" element={<DoctorsDetails />} />
             <Route path="/profile" element={<Profile />} />
+            
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogDetail />} />
         </Routes>
     );
 };

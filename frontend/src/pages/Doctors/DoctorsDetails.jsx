@@ -181,7 +181,7 @@ const DoctorDetails = () => {
   if (loading) return <div className="text-center py-10 text-white">Loading...</div>;
   if (!doctor) return <div className="text-center py-10 text-red-400">Doctor not found.</div>;
 
-  return (
+    return (
     <div className="w-full min-h-screen bg-[#181d23] flex flex-col items-center py-12 px-2">
       {/* Success Message */}
       {bookingSuccess && (
@@ -352,7 +352,7 @@ const DoctorDetails = () => {
         </div>
       )}
     </div>
-  );
+    );
 };
 
 export default DoctorDetails;
