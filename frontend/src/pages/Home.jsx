@@ -148,9 +148,9 @@ const Home = () => {
       });
   }, []);
 
-  // Fetch featured blog posts
+  // Fetch featured blog posts from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/blog?featured=true")
+    fetch("http://localhost:5000/api/blog?featured=true&limit=4")
       .then((res) => res.json())
       .then((data) => {
         setFeaturedBlogPosts(data.posts || []);
@@ -159,6 +159,8 @@ const Home = () => {
         console.error("Failed to fetch featured blog posts:", err);
       });
   }, []);
+
+
 
   useEffect(() => {
     // Scroll to #home section on mount or when navigated to /
@@ -240,6 +242,14 @@ const Home = () => {
   const scrollToContact = () => {
     if (contactRef.current) {
       contactRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Scroll to blog section
+  const scrollToBlog = () => {
+    const blogSection = document.getElementById("blog");
+    if (blogSection) {
+      blogSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -731,11 +741,11 @@ const Home = () => {
           <div className="text-center mb-12 sm:mb-16">
             <span className="uppercase text-teal-400 text-xs sm:text-sm font-semibold tracking-widest mb-2">Our Blog</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4">Recent Articles and News</h2>
-            <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-3xl mx-auto">
+            <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-3xl mx-auto mb-6">
               Since its founding, MediMeet has been providing its patients with full medical care, encompassing outpatient services, neurology, laboratory, imaging diagnostics and more.
             </p>
-            <div className="mt-6">
-              <Link to="/blog" className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-3 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 inline-block">
+            <div className="flex justify-center">
+              <Link to="/blog" className="bg-[#181d23] hover:bg-teal-600 text-white font-bold px-6 sm:px-8 py-3 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 inline-block">
                 MORE ARTICLES
               </Link>
             </div>
@@ -743,195 +753,64 @@ const Home = () => {
 
           {/* Blog Articles Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            {featuredBlogPosts.slice(0, 4).map((post, index) => (
-              <article key={post.id} className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={post.image} 
-                    alt={post.title} 
-                    className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                    {post.date}
+            {featuredBlogPosts.length === 0 ? (
+              <div className="col-span-full text-center text-gray-400 py-12">
+                <p className="text-lg">No blog posts available yet.</p>
+                <p className="text-sm mt-2">Check back soon for medical articles and news!</p>
+              </div>
+            ) : (
+              featuredBlogPosts.map((post) => (
+                <article key={post._id} className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
+                  <div className="relative overflow-hidden">
+                    <img 
+                      src={post.image ? `http://localhost:5000${post.image}` : doc1} 
+                      alt={post.title} 
+                      className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
+                      {new Date(post.createdAt).toLocaleDateString('en-US', { 
+                        day: 'numeric', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      })}
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
-                    {post.title}
-                  </h3>
-                  <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                    <span className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  <div className="p-6">
+                    <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
+                      {post.title}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        {post.comments || 0} Comments
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        {post.author || 'Admin'}
+                      </span>
+                    </div>
+                    <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
+                      {post.excerpt || post.content?.substring(0, 150) + '...'}
+                    </p>
+                    <Link to={`/blog/${post.slug || post._id}`} className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
+                      Read More
+                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                      {post.comments} Comments
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      {post.author}
-                    </span>
+                    </Link>
                   </div>
-                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
-                    {post.excerpt}
-                  </p>
-                  <Link to={`/blog/${post.slug}`} className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
-                    Read More
-                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
-              </article>
-            ))}
-
-            {/* Article 2 */}
-            <article className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
-              <div className="relative overflow-hidden">
-                <img 
-                  src={doc2} 
-                  alt="Surgical Equipment" 
-                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                  12 Nov 2024
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
-                  Implant Surgical Equipment Technology
-                </h3>
-                <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    5 Comments
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Dr. Sarah
-                  </span>
-                </div>
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
-                </p>
-                <Link to="/blog/surgical-equipment-technology" className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
-                  Read More
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            </article>
-
-            {/* Article 3 */}
-            <article className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
-              <div className="relative overflow-hidden">
-                <img 
-                  src={doc3} 
-                  alt="Fitness and Health" 
-                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                  20 Nov 2024
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
-                  The Benefits of Middle-Age Fitness
-                </h3>
-                <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    2 Comments
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Dr. Michael
-                  </span>
-                </div>
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
-                </p>
-                <Link to="/blog/middle-age-fitness-benefits" className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
-                  Read More
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            </article>
-
-            {/* Article 4 */}
-            <article className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
-              <div className="relative overflow-hidden">
-                <img 
-                  src={doc4} 
-                  alt="Healthy Eating" 
-                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute bottom-3 left-3 bg-teal-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                  23 Nov 2024
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-200">
-                  Good Reasons to Break the Fast-Food Habit
-                </h3>
-                <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    7 Comments
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Dr. Emily
-                  </span>
-                </div>
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
-                </p>
-                <Link to="/blog/break-fast-food-habit" className="text-teal-400 font-semibold text-sm hover:text-teal-300 transition-colors duration-200 flex items-center gap-2 group">
-                  Read More
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            </article>
-          </div>
-
-          {/* Newsletter Subscription */}
-          <div className="mt-16 sm:mt-20 bg-gradient-to-r from-teal-500/10 to-blue-500/10 rounded-2xl p-8 sm:p-12 text-center border border-teal-500/20">
-            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Stay Updated with Medical News</h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-6 max-w-2xl mx-auto">
-              Subscribe to our newsletter and get the latest health tips, medical research updates, and wellness advice delivered to your inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input 
-                type="email" 
-                placeholder="Enter your email address" 
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 transition-colors duration-200"
-              />
-              <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-3 rounded-lg transition-all duration-200 hover:scale-105 shadow-lg">
-                Subscribe
-              </button>
-            </div>
+                </article>
+              ))
+            )}
           </div>
         </div>
       </section>
+
+
 
       {/* Scroll to Top Button */}
       <button
