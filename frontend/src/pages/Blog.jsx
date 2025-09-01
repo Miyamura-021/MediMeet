@@ -15,7 +15,7 @@ const Blog = () => {
 
   const fetchBlogPosts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/blog');
+      const response = await fetch('https://medimeet-n9p5.onrender.com/api/blog');
       const data = await response.json();
       setBlogPosts(data.posts || []);
       setLoading(false);
@@ -51,7 +51,7 @@ const Blog = () => {
               <article key={post.id} className="bg-[#181d23] rounded-xl overflow-hidden shadow-2xl hover:shadow-teal-500/20 transition-all duration-300 hover:scale-105 group">
                 <div className="relative overflow-hidden">
                   <img 
-                    src={post.image ? `http://localhost:5000${post.image}` : doc1} 
+                    src={post.image ? `https://medimeet-n9p5.onrender.com${post.image}` : doc1} 
                     alt={post.title} 
                     className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
                     style={{ objectPosition: 'top center' }}

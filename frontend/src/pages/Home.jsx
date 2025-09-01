@@ -136,7 +136,7 @@ const Home = () => {
 
   // Fetch doctors from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/doctors?featured=true")
+    fetch("https://medimeet-n9p5.onrender.com/api/doctors?featured=true")
       .then((res) => res.json())
       .then((data) => {
         setDoctors(data.doctors || []);
@@ -150,7 +150,7 @@ const Home = () => {
 
   // Fetch featured blog posts from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/blog?featured=true&limit=4")
+    fetch("https://medimeet-n9p5.onrender.com/api/blog?featured=true&limit=4")
       .then((res) => res.json())
       .then((data) => {
         setFeaturedBlogPosts(data.posts || []);
@@ -279,7 +279,7 @@ const Home = () => {
         reason: contactForm.message || 'General consultation'
       };
 
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const response = await fetch('https://medimeet-n9p5.onrender.com/api/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -324,7 +324,7 @@ const Home = () => {
   // Fetch available time slots for selected date
   const fetchAvailableTimeSlots = async (date) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/slots?appointmentDate=${date}`);
+      const response = await fetch(`https://medimeet-n9p5.onrender.com/api/bookings/slots?appointmentDate=${date}`);
       const data = await response.json();
       
       // Generate time slots with availability
@@ -601,7 +601,7 @@ const Home = () => {
               <div key={doc._id} className="bg-[#23282f] rounded shadow-lg overflow-hidden flex flex-col items-center pb-4 sm:pb-6">
               <div className="w-full aspect-square bg-[#23282f] flex items-center justify-center">
                 <img
-                    src={doc.photo ? `http://localhost:5000${doc.photo}` : '/default-avatar.png'}
+                    src={doc.photo ? `https://medimeet-n9p5.onrender.com${doc.photo}` : '/default-avatar.png'}
                     alt={`Dr. ${doc.name}`}
                   className="w-full h-full object-cover rounded border-2 border-[#23282f]"
                 />
@@ -781,7 +781,7 @@ const Home = () => {
                   {/* Image on the left */}
                   <div className="relative w-56 flex-shrink-0">
                     <img 
-                      src={post.image ? `http://localhost:5000${post.image}` : doc1} 
+                      src={post.image ? `https://medimeet-n9p5.onrender.com${post.image}` : doc1} 
                       alt={post.title} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

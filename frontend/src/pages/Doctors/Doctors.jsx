@@ -28,7 +28,7 @@ const Doctors = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/doctors")
+    fetch("https://medimeet-n9p5.onrender.com/api/doctors")
       .then((res) => res.json())
       .then((data) => {
         const doctorsList = data.doctors || [];
@@ -193,7 +193,7 @@ const Doctors = () => {
                 <div className="relative h-48 overflow-hidden">
                   {doctor.photo ? (
                     <img
-                      src={`http://localhost:5000${doctor.photo}`}
+                      src={`https://medimeet-n9p5.onrender.com${doctor.photo}`}
                       alt={doctor.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

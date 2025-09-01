@@ -12,7 +12,7 @@ const navLinks = [
   { name: "Blog", path: "#blog" },
 ];
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://medimeet-n9p5.onrender.com';
 
 const Header = ({ activeSection }) => {
   const location = useLocation();

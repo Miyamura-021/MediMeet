@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://medimeet-n9p5.onrender.com/api';
 
 const DoctorDetails = () => {
   const { id } = useParams();
@@ -199,7 +199,7 @@ const DoctorDetails = () => {
         </div>
         {/* Photo */}
         <div className="flex-shrink-0 flex flex-col items-center justify-center p-8 bg-[#181d23]">
-          <img src={doctor.photo ? `http://localhost:5000${doctor.photo}` : '/default-avatar.png'} alt={doctor.name} className="w-64 h-64 rounded-xl object-cover mb-4 border-4 border-[#23282f]" />
+          <img src={doctor.photo ? `https://medimeet-n9p5.onrender.com${doctor.photo}` : '/default-avatar.png'} alt={doctor.name} className="w-64 h-64 rounded-xl object-cover mb-4 border-4 border-[#23282f]" />
         </div>
         {/* Details */}
         <div className="flex-1 flex flex-col justify-center p-8 gap-4">

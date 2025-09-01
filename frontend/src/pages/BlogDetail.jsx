@@ -18,7 +18,7 @@ const BlogDetail = () => {
 
   const fetchBlogPost = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/blog/${slug}`);
+      const response = await fetch(`https://medimeet-n9p5.onrender.com/api/blog/${slug}`);
       const data = await response.json();
       setPost(data.post);
       setLoading(false);
@@ -30,7 +30,7 @@ const BlogDetail = () => {
 
   const fetchRelatedPosts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/blog');
+      const response = await fetch('https://medimeet-n9p5.onrender.com/api/blog');
       const data = await response.json();
       // Get 3 random posts excluding current one
       const filtered = data.posts.filter(p => p.slug !== slug);
@@ -114,7 +114,7 @@ const BlogDetail = () => {
         {/* Featured Image */}
         <div className="bg-[#181d23] rounded-2xl overflow-hidden shadow-2xl mb-8">
           <img 
-            src={post.image ? `http://localhost:5000${post.image}` : doc1} 
+            src={post.image ? `https://medimeet-n9p5.onrender.com${post.image}` : doc1} 
             alt={post.title} 
             className="w-full object-cover"
             style={{ 
@@ -161,7 +161,7 @@ const BlogDetail = () => {
                   <div className="bg-white/5 rounded-xl p-4 hover:bg-white/10 transition-all duration-200">
                     <div className="relative mb-3">
                       <img 
-                        src={relatedPost.image ? `http://localhost:5000${relatedPost.image}` : doc1} 
+                        src={relatedPost.image ? `https://medimeet-n9p5.onrender.com${relatedPost.image}` : doc1} 
                         alt={relatedPost.title} 
                         className="w-full h-32 object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
                       />

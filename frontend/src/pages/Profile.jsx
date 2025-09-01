@@ -4,8 +4,8 @@ import DoctorForm from '../components/Doctors/DoctorForm';
 import RecordForm from '../components/Forms/RecordForm';
 import BlogForm from '../components/Forms/BlogForm';
 
-const API_URL = 'http://localhost:5000/api';
-const API_BASE = 'http://localhost:5000';
+const API_URL = 'https://medimeet-n9p5.onrender.com/api';
+const API_BASE = 'https://medimeet-n9p5.onrender.com';
 
 const Profile = () => {
   const [user, setUser] = useState(null);

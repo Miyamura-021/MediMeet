@@ -18,7 +18,7 @@ const DoctorSignup = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/doctors');
+        const response = await fetch('https://medimeet-n9p5.onrender.com/api/doctors');
         const data = await response.json();
         setDoctors(data.doctors || []);
       } catch (err) {
@@ -73,7 +73,7 @@ const DoctorSignup = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/doctor-signup', {
+      const response = await fetch('https://medimeet-n9p5.onrender.com/api/auth/doctor-signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
