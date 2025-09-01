@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
+import config from './config.js';
 import Doctor from './models/DoctorSchema.js';
 import User from './models/UserSchema.js';
 import bcrypt from 'bcryptjs';
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
 // MongoDB connection
-mongoose.connect('mongodb://127.0.0.1:27017/appointment_booking', {
+mongoose.connect(config.db, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -277,8 +278,8 @@ app.post('/api/auth/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },
-      'your_jwt_secret', // Replace with process.env.JWT_SECRET in production
-      { expiresIn: '7d' }
+      config.jwtSecret, // Replace with process.env.JWT_SECRET in production
+      { expiresIn: config.jwtExpiration }
     );
     // Return token and user info (excluding password)
     const { password: _, ...userData } = user._doc;
@@ -734,6 +735,6 @@ app.patch('/api/blog/:id/featured', async (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
 }); 
